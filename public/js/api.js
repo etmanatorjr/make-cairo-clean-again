@@ -106,20 +106,22 @@ var Api = (function () {
     pendingCount: function () { return queue().length; },
     flushQueue: flushQueue,
 
-    /** POST /api/score { nickname, type, score } */
+    /** POST /api/score { firstName, initial, type, score } */
     sendScore: function (type, score) {
-      return send('/api/score', { nickname: Store.nickname(), type: type, score: score });
+      return send('/api/score', { firstName: Store.firstName(), initial: Store.initial(), type: type, score: score });
     },
 
-    /** POST /api/action { nickname, action } */
+    /** POST /api/action { firstName, initial, action } */
     sendAction: function (action) {
-      return send('/api/action', { nickname: Store.nickname(), action: action });
+      return send('/api/action', { firstName: Store.firstName(), initial: Store.initial(), action: action });
     },
 
-    /** GET /api/leaderboard (with my nickname so the server can tell me my rank) */
+    /** GET /api/leaderboard (with my name so the server can tell me my rank) */
     leaderboard: function () {
-      var nick = Store.nickname();
-      return request('/api/leaderboard' + (nick ? '?nickname=' + encodeURIComponent(nick) : ''));
+      var q = Store.hasName()
+        ? '?firstName=' + encodeURIComponent(Store.firstName()) + '&initial=' + encodeURIComponent(Store.initial())
+        : '';
+      return request('/api/leaderboard' + q);
     },
 
     /** GET /api/stats — the "everyone together" totals */

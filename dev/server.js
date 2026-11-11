@@ -5,6 +5,7 @@
    - Runs the /api functions the same way Vercel does
    - Reads SHEET_URL and SHEET_SECRET from .env.local (never committed).
      If .env.local is missing, it starts the mock Apps Script automatically.
+     npm run dev:mock   -> always use the mock (never touches the real sheet)
    ========================================================================== */
 const http = require('http');
 const fs = require('fs');
@@ -70,11 +71,13 @@ function serveStatic(req, res) {
 }
 
 async function main() {
-  if (!loadEnv() || !process.env.SHEET_URL) {
+  // --mock = always use the fake Apps Script (so testing never writes to my real sheet)
+  const forceMock = process.argv.includes('--mock');
+  if (forceMock || !loadEnv() || !process.env.SHEET_URL) {
     const mock = await require('./mock-apps-script.js').start({ port: 4100 });
     process.env.SHEET_URL = mock.url;
     process.env.SHEET_SECRET = mock.secret;
-    console.log('No .env.local found: using the MOCK Apps Script at ' + mock.url);
+    console.log('Using the MOCK Apps Script at ' + mock.url);
   } else {
     console.log('Using the REAL Google Sheet from .env.local');
   }

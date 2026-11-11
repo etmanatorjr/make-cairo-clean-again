@@ -17,7 +17,7 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const data = await readBoard('');
+    const data = await readBoard(null);
     res.setHeader('Cache-Control', 'public, max-age=0, s-maxage=5');
     return send(res, 200, { ok: true, totals: data.totals, updated: data.updated });
   } catch (e) {

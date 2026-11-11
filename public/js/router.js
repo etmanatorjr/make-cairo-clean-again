@@ -2,7 +2,7 @@
    router.js — moves between screens with smooth slide/fade transitions.
 
    - Tab screens (Home, Air, Waste, Play, Action) fade into each other.
-   - Inner screens (Quiz, Game, Leaderboard, Sources, Nickname) slide in from
+   - Inner screens (Quiz, Game, Leaderboard, Sources, Name) slide in from
      the right and slide back out when you press Back.
    - Uses the browser history, so the phone/browser Back button also works
      (important for the Android APK later).
@@ -23,7 +23,7 @@ var Router = (function () {
 
   /** Where the Back button goes if there is no history (e.g. page was refreshed). */
   function parentOf(name) {
-    if (name === 'nickname') return Store.nickname() ? 'home' : 'splash';
+    if (name === 'name') return Store.hasName() ? 'home' : 'splash';
     return el(name).getAttribute('data-parent') || 'home';
   }
 
@@ -119,9 +119,9 @@ var Router = (function () {
     var state = e.state || { screen: (location.hash || '#home').slice(1), i: 0 };
     var dir = state.i < index ? 'back' : 'forward';
     index = state.i;
-    // the splash and first-time nickname screens are not allowed once a nickname exists
+    // you need a name before you can use the other screens
     var target = state.screen;
-    if (!Store.nickname() && target !== 'splash' && target !== 'nickname') target = 'splash';
+    if (!Store.hasName() && target !== 'splash' && target !== 'name') target = 'splash';
     show(target, dir);
   });
 

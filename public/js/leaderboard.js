@@ -5,12 +5,12 @@
 var Leaderboard = (function () {
   'use strict';
   var $ = function (id) { return document.getElementById(id); };
-  var CACHE_KEY = 'lbCache';
+  var CACHE_KEY = 'lbCache2';      // v2: rows have "name" (was "nickname")
   var view = 'quiz';                    // which list is showing: quiz | game
   var data = Store.get(CACHE_KEY, null);
 
   function isMe(name) {
-    var me = Store.nickname();
+    var me = Store.displayName();
     return me && String(name).toLowerCase() === me.toLowerCase();
   }
 
@@ -24,17 +24,17 @@ var Leaderboard = (function () {
     }
     rows.forEach(function (row, i) {
       var li = document.createElement('li');
-      li.className = 'lb-row' + (isMe(row.nickname) ? ' is-me' : '');
+      li.className = 'lb-row' + (isMe(row.name) ? ' is-me' : '');
       li.innerHTML = '<span class="lb-rank"></span><span class="lb-name"></span><span class="lb-score"></span>';
       li.children[0].textContent = i + 1;
-      li.children[1].textContent = row.nickname + (isMe(row.nickname) ? ' (you)' : '');
+      li.children[1].textContent = row.name + (isMe(row.name) ? ' (you)' : '');
       li.children[2].textContent = view === 'quiz' ? row.score + '/10' : row.score;
-      li.setAttribute('aria-label', 'Rank ' + (i + 1) + ', ' + row.nickname + ', score ' + row.score);
+      li.setAttribute('aria-label', 'Rank ' + (i + 1) + ', ' + row.name + ', score ' + row.score);
       list.appendChild(li);
     });
 
     var rank = data.myRank ? data.myRank[view] : null;
-    $('lbMe').textContent = !Store.nickname() ? '' :
+    $('lbMe').textContent = !Store.hasName() ? '' :
       rank ? 'Your rank: #' + rank : 'Play to get on the board!';
   }
 

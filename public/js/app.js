@@ -44,7 +44,7 @@ var App = (function () {
     toastTimer = setTimeout(function () { t.classList.remove('is-on'); }, 2600);
   }
 
-  /* ---------- Home: nickname + "everyone together" totals ---------- */
+  /* ---------- Home: my name + "everyone together" totals ---------- */
   function renderStats(t) {
     if (!t) return;
     $('statActions').textContent = t.actions;
@@ -66,31 +66,34 @@ var App = (function () {
     });
   }
 
-  /* ---------- Nickname screen ---------- */
-  var nickInput = $('nickInput');
-  function updateCount() { $('nickCount').textContent = nickInput.value.length + '/15'; }
-  nickInput.addEventListener('input', function () { updateCount(); $('nickError').textContent = ''; });
-
-  // BUTTON: Random name
-  $('btnRandomNick').addEventListener('click', function () {
-    nickInput.value = DATA.randomNick();
+  /* ---------- Name screen: first name + last name initial ---------- */
+  var firstInput = $('firstNameInput');
+  var initialInput = $('initialInput');
+  function updateCount() { $('firstNameCount').textContent = firstInput.value.length + '/15'; }
+  function clearErrors() { $('firstNameError').textContent = ''; $('initialError').textContent = ''; }
+  function fillNameForm() {
+    firstInput.value = Store.firstName();
+    initialInput.value = Store.initial();
     updateCount();
-    $('nickError').textContent = '';
-  });
+    clearErrors();
+  }
+  firstInput.addEventListener('input', function () { updateCount(); clearErrors(); });
+  initialInput.addEventListener('input', clearErrors);
 
   // BUTTON: Save (form submit)
-  $('nickForm').addEventListener('submit', function (e) {
+  $('nameForm').addEventListener('submit', function (e) {
     e.preventDefault();
-    var check = Rules.validateNickname(nickInput.value);
+    var check = Rules.validateName(firstInput.value, initialInput.value);
     if (!check.ok) {
-      $('nickError').textContent = check.error;
-      nickInput.focus();
+      var isFirst = check.field === 'firstName';
+      $(isFirst ? 'firstNameError' : 'initialError').textContent = check.error;
+      (isFirst ? firstInput : initialInput).focus();
       return;
     }
-    var first = !Store.nickname();
-    Store.setNickname(check.value);
-    toast(first ? 'Welcome, ' + check.value + '!' : 'Nickname saved.');
-    Router.go('home', { replace: true, dir: first ? 'fade' : 'back' });
+    var firstTime = !Store.hasName();
+    Store.setName(check.firstName, check.initial);
+    toast(firstTime ? 'Hey ' + check.firstName + '!' : 'Saved. You\'re ' + check.display);
+    Router.go('home', { replace: true, dir: firstTime ? 'fade' : 'back' });
   });
 
   /* ---------- Sources list ---------- */
@@ -113,13 +116,12 @@ var App = (function () {
   /* ---------- Connect every navigation button ---------- */
   // BUTTON: Start (splash)
   $('btnStart').addEventListener('click', function () {
-    Router.go(Store.nickname() ? 'home' : 'nickname', { replace: true, dir: 'forward' });
+    Router.go(Store.hasName() ? 'home' : 'name', { replace: true, dir: 'forward' });
   });
-  // BUTTON: Change nickname (home)
-  $('btnEditNick').addEventListener('click', function () {
-    nickInput.value = Store.nickname();
-    updateCount();
-    Router.go('nickname');
+  // BUTTON: Change name (home)
+  $('btnEditName').addEventListener('click', function () {
+    fillNameForm();
+    Router.go('name');
   });
   // BUTTON: Refresh AQI (air)
   $('btnAqiRefresh').addEventListener('click', function () { Air.load(true); });
@@ -139,15 +141,12 @@ var App = (function () {
 
   /* ---------- What happens when each screen opens ---------- */
   Router.on('home', function () {
-    $('homeNick').textContent = Store.nickname() || 'friend';
+    $('homeName').textContent = Store.displayName() || 'friend';
     refreshStats();
     Actions.updateHome();
     Air.load(false);
   });
-  Router.on('nickname', function () {
-    if (!Store.nickname()) { nickInput.value = ''; updateCount(); }
-    $('nickError').textContent = '';
-  });
+  Router.on('name', fillNameForm);
   Router.on('air', function () { Air.load(false); });
   Router.on('play', function () {
     var q = Store.bestQuiz(), g = Store.bestGame();
@@ -180,7 +179,7 @@ var App = (function () {
   /* ---------- Start the app ---------- */
   var hash = (location.hash || '').slice(1);
   var known = hash && document.getElementById('screen-' + hash);
-  var first = Store.nickname() && known && hash !== 'splash' && hash !== 'nickname' ? hash : 'splash';
+  var first = Store.hasName() && known && hash !== 'splash' && hash !== 'name' ? hash : 'splash';
   Router.start(first);
   flush();
   Air.load(false);   // warm up the live AQI for the Home tile

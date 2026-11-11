@@ -84,18 +84,9 @@ var DATA = (function () {
     { name: 'Open-Meteo', what: 'Live Cairo air quality API (free, no key)', url: 'https://open-meteo.com/en/docs/air-quality-api' }
   ];
 
-  // ----- Random safe nicknames -----
-  var NICK_A = ['Eco', 'Green', 'Clean', 'Nile', 'Metro', 'Solar', 'Fresh', 'Sky'];
-  var NICK_B = ['Falcon', 'Hero', 'Lion', 'Star', 'Ranger', 'Hawk', 'Panda', 'Ninja'];
-
   return {
     FACTS: FACTS, QUIZ: QUIZ, QUIZ_LENGTH: QUIZ_LENGTH, TRASH: TRASH,
-    ACTIONS: ACTIONS, AQI_LEVELS: AQI_LEVELS, SOURCES: SOURCES,
-    randomNick: function () {
-      var a = NICK_A[Math.floor(Math.random() * NICK_A.length)];
-      var b = NICK_B[Math.floor(Math.random() * NICK_B.length)];
-      return a + ' ' + b + ' ' + Math.floor(Math.random() * 90 + 10);
-    }
+    ACTIONS: ACTIONS, AQI_LEVELS: AQI_LEVELS, SOURCES: SOURCES
   };
 })();
 

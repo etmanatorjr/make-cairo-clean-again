@@ -1,7 +1,7 @@
 /* ==========================================================================
-   GET /api/leaderboard?nickname=Optional
-   Returns the top 10 quiz and top 10 game scores (best score per nickname),
-   plus my rank if a nickname is given.
+   GET /api/leaderboard?firstName=Mahmoud&initial=E   (both optional)
+   Returns the top 10 quiz and top 10 game scores (best score per person),
+   plus my rank if my name is given. Names look like "Mahmoud E.".
    ========================================================================== */
 const Rules = require('../public/js/rules.js');
 const { cors, send, rateLimit } = require('./_lib/http.js');
@@ -17,16 +17,16 @@ module.exports = async function handler(req, res) {
     return send(res, 429, { ok: false, error: 'Too many requests. Wait a minute.' });
   }
 
-  // nickname is optional; ignore it if it is not a valid nickname
-  const raw = req.query && typeof req.query.nickname === 'string' ? req.query.nickname : '';
-  const nick = raw ? Rules.validateNickname(raw) : { ok: false };
+  // my name is optional; ignore it if it is not valid
+  const q = req.query || {};
+  const me = q.firstName ? Rules.validateName(String(q.firstName), String(q.initial || '')) : { ok: false };
 
   try {
-    const data = await readBoard(nick.ok ? nick.value : '');
+    const data = await readBoard(me.ok ? { firstName: me.firstName, initial: me.initial } : null);
     // let Vercel's CDN keep the answer for 5 seconds so the sheet is not hit too often
     res.setHeader('Cache-Control', 'public, max-age=0, s-maxage=5');
-    // only send what the app needs: nickname and score
-    const clean = (list) => (list || []).map((r) => ({ nickname: String(r.nickname), score: Number(r.score) }));
+    // only send what the app needs: the name ("Mahmoud E.") and the score
+    const clean = (list) => (list || []).map((r) => ({ name: String(r.name || r.nickname), score: Number(r.score) }));
     return send(res, 200, {
       ok: true,
       quiz: clean(data.quiz),

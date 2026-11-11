@@ -1,5 +1,5 @@
 /* ==========================================================================
-   POST /api/action   { nickname, action: "recycle" | "metro" | "noburn" }
+   POST /api/action   { firstName, initial, action: "recycle" | "metro" | "noburn" }
    Checks everything, then adds a row to the "Actions" tab of my Google Sheet.
    ========================================================================== */
 const Rules = require('../public/js/rules.js');
@@ -20,14 +20,14 @@ module.exports = async function handler(req, res) {
   const body = readBody(req);
   if (!body) return send(res, 400, { ok: false, error: 'Send JSON' });
 
-  const nick = Rules.validateNickname(body.nickname);
-  if (!nick.ok) return send(res, 400, { ok: false, error: 'nickname: ' + nick.error });
+  const name = Rules.validateName(body.firstName, body.initial);
+  if (!name.ok) return send(res, 400, { ok: false, error: name.field + ': ' + name.error });
   const action = Rules.validateAction(body.action);
   if (!action.ok) return send(res, 400, { ok: false, error: action.error });
 
   try {
-    await writeRow({ kind: 'action', nickname: nick.value, action: action.value });
-    return send(res, 201, { ok: true, saved: { nickname: nick.value, action: action.value } });
+    await writeRow({ kind: 'action', firstName: name.firstName, initial: name.initial, action: action.value });
+    return send(res, 201, { ok: true, saved: { firstName: name.firstName, initial: name.initial, action: action.value } });
   } catch (e) {
     console.error('action failed:', e.message);
     return send(res, e.status || 502, { ok: false, error: e.message });

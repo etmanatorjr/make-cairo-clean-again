@@ -111,35 +111,41 @@
         <p class="eyebrow">SDG 11.6 · Cairo</p>
         <h1 class="splash-title" id="title-splash" tabindex="-1">Make Cairo<br>Clean Again</h1>
         <p class="splash-sub">Cleaner air. Less waste.<br>A better city for us.</p>
-        <!-- BUTTON: Start — goes to Nickname (first time) or Home -->
+        <!-- BUTTON: Start — goes to Name (first time) or Home -->
         <button class="btn btn-primary btn-big" id="btnStart" type="button" aria-label="Start the app">Start</button>
         <p class="credit">Made by Mahmoud Etman 9E</p>
       </div>
     </section>
 
     <!-- ================================================================
-         SCREEN: NICKNAME — pick or change your nickname (inner screen)
+         SCREEN: NAME — first name + last name initial (inner screen)
          ================================================================ -->
-    <section class="screen" id="screen-nickname" data-title="Nickname" aria-labelledby="title-nickname" hidden>
+    <section class="screen" id="screen-name" data-title="Your name" aria-labelledby="title-name" hidden>
       <header class="screen-header">
         <!-- BUTTON: Back -->
         <button class="back-btn" type="button" data-back aria-label="Go back"><svg aria-hidden="true"><use href="#i-back"/></svg><span>Back</span></button>
-        <h1 class="screen-title" id="title-nickname" tabindex="-1">Your nickname</h1>
+        <h1 class="screen-title" id="title-name" tabindex="-1">Your name</h1>
       </header>
       <div class="screen-body">
-        <p class="lead">This name shows on the leaderboard.</p>
-        <form id="nickForm" class="nick-form" novalidate>
-          <label class="field-label" for="nickInput">Nickname</label>
-          <input class="field-input" id="nickInput" name="nickname" type="text" maxlength="15" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="e.g. Eco Falcon" aria-describedby="nickHint nickError">
+        <p class="lead">This is how you show up on the leaderboard, like "Mahmoud E."</p>
+        <form id="nameForm" class="name-form" novalidate>
+          <!-- FIELD: First name -->
+          <label class="field-label" for="firstNameInput">First name</label>
+          <input class="field-input" id="firstNameInput" name="firstName" type="text" maxlength="15" autocomplete="given-name" autocapitalize="words" spellcheck="false" placeholder="Mahmoud" aria-describedby="firstNameHint firstNameError">
           <div class="field-row">
-            <p class="field-hint" id="nickHint">No real names or emails.</p>
-            <span class="field-count" id="nickCount" aria-label="Characters used">0/15</span>
+            <p class="field-hint" id="firstNameHint">Letters A–Z only.</p>
+            <span class="field-count" id="firstNameCount" aria-label="Letters used">0/15</span>
           </div>
-          <p class="field-error" id="nickError" role="alert"></p>
-          <!-- BUTTON: Random nickname — fills the box with a fun safe name -->
-          <button class="btn btn-ghost" id="btnRandomNick" type="button" aria-label="Make a random nickname"><svg aria-hidden="true"><use href="#i-dice"/></svg>Random name</button>
-          <!-- BUTTON: Save nickname -->
-          <button class="btn btn-primary btn-big" id="btnSaveNick" type="submit" aria-label="Save nickname">Save</button>
+          <p class="field-error" id="firstNameError" role="alert"></p>
+
+          <!-- FIELD: Last name initial (1 letter) -->
+          <label class="field-label" for="initialInput">Last name initial</label>
+          <input class="field-input field-initial" id="initialInput" name="initial" type="text" maxlength="1" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="E" aria-describedby="initialHint initialError">
+          <p class="field-hint" id="initialHint">Just 1 letter.</p>
+          <p class="field-error" id="initialError" role="alert"></p>
+
+          <!-- BUTTON: Save name -->
+          <button class="btn btn-primary btn-big" id="btnSaveName" type="submit" aria-label="Save my name">Save</button>
         </form>
       </div>
     </section>
@@ -151,10 +157,10 @@
       <header class="screen-header home-header">
         <div>
           <p class="eyebrow">Hello,</p>
-          <h1 class="screen-title" id="title-home" tabindex="-1"><span id="homeNick">friend</span></h1>
+          <h1 class="screen-title" id="title-home" tabindex="-1"><span id="homeName">friend</span></h1>
         </div>
-        <!-- BUTTON: Change nickname -->
-        <button class="icon-btn" id="btnEditNick" type="button" aria-label="Change nickname"><svg aria-hidden="true"><use href="#i-pencil"/></svg></button>
+        <!-- BUTTON: Change my name -->
+        <button class="icon-btn" id="btnEditName" type="button" aria-label="Change my name"><svg aria-hidden="true"><use href="#i-pencil"/></svg></button>
       </header>
       <div class="screen-body">
         <!-- CARD: Everyone together — live totals from the Google Sheet -->

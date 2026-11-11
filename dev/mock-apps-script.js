@@ -23,6 +23,7 @@ function createMockSheets() {
     const sheet = {
       name,
       rows,
+      setName: (n) => { delete tabs[sheet.name]; sheet.name = n; tabs[n] = sheet; return sheet; },
       getLastRow: () => rows.length,
       appendRow: (r) => { rows.push(r.slice()); return sheet; },
       setFrozenRows: () => sheet,
@@ -33,7 +34,8 @@ function createMockSheets() {
             vals.forEach((v, i) => { rows[row - 1 + i] = v.slice(0, nCols); });
             return range;
           },
-          setFontWeight: () => range
+          setFontWeight: () => range,
+          getValues: () => Array.from({ length: nRows }, (_, i) => (rows[row - 1 + i] || []).slice(col - 1, col - 1 + nCols))
         };
         return range;
       }
@@ -43,7 +45,8 @@ function createMockSheets() {
   return {
     tabs,
     getSheetByName: (n) => tabs[n] || null,
-    insertSheet: (n) => (tabs[n] = makeSheet(n))
+    insertSheet: (n) => (tabs[n] = makeSheet(n)),
+    makeSheet
   };
 }
 

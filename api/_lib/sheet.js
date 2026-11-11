@@ -48,7 +48,7 @@ async function readAppsScriptReply(res) {
   return data;
 }
 
-/** Add a row: payload is { kind: 'score', nickname, type, score } or { kind: 'action', nickname, action } */
+/** Add a row: payload is { kind: 'score', firstName, initial, type, score } or { kind: 'action', firstName, initial, action } */
 async function writeRow(payload) {
   const { url, secret } = config();
   try {
@@ -65,12 +65,15 @@ async function writeRow(payload) {
   }
 }
 
-/** Read the leaderboard and totals (optional nickname to get "my rank"). */
-async function readBoard(nickname) {
+/** Read the leaderboard and totals. me = { firstName, initial } (optional) to get "my rank". */
+async function readBoard(me) {
   const { url, secret } = config();
   const u = new URL(url);
   u.searchParams.set('secret', secret);
-  if (nickname) u.searchParams.set('nickname', nickname);
+  if (me) {
+    u.searchParams.set('firstName', me.firstName);
+    u.searchParams.set('initial', me.initial);
+  }
   try {
     const res = await fetch(u, { method: 'GET', redirect: 'manual', signal: AbortSignal.timeout(TIMEOUT_MS) });
     return await readAppsScriptReply(res);

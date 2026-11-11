@@ -1,5 +1,5 @@
 /* ==========================================================================
-   rules.js — shared rules for nicknames, scores and actions.
+   rules.js — shared rules for names, scores and actions.
    This ONE file is used by BOTH:
      - the app in the browser   (loaded with <script src="js/rules.js">)
      - the Vercel server in /api (loaded with require('../../public/js/rules.js'))
@@ -15,8 +15,8 @@
 })(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
 
-  var NICK_MIN = 2;
-  var NICK_MAX = 15;
+  var NAME_MIN = 2;      // first name: 2–15 letters
+  var NAME_MAX = 15;
 
   // Allowed score ranges. Game points are +10 (right bin) or -5 (wrong bin),
   // so a real game score is always a multiple of 5.
@@ -29,7 +29,7 @@
   var ACTIONS = ['recycle', 'metro', 'noburn'];
   var ACTION_NAMES = { recycle: 'Recycle', metro: 'Take the metro', noburn: "Don't burn trash" };
 
-  // Words that are blocked inside nicknames (English + Egyptian Arabic).
+  // Words that are blocked inside names (English + Egyptian Arabic).
   // SHORT words only block when they are a whole word (so "Bassem" is fine).
   var BAD_WORDS = [
     'fuck', 'shit', 'bitch', 'asshole', 'bastard', 'cunt', 'pussy', 'slut', 'whore',
@@ -72,22 +72,45 @@
   }
 
   /**
-   * Check a nickname. Returns { ok: true, value } or { ok: false, error }.
-   * Rules: 2–15 characters, letters/numbers/spaces/_ . - only, must start with a
-   * letter or number, no emails, no links, no phone numbers, no bad words.
+   * Check a first name. Returns { ok: true, value } or { ok: false, error }.
+   * Rules: English letters only (A–Z), 2–15 letters, no bad words.
+   * The first letter is made a capital: "mahmoud" -> "Mahmoud".
    */
-  function validateNickname(raw) {
-    if (typeof raw !== 'string') return { ok: false, error: 'Type a nickname.' };
-    var value = raw.normalize('NFKC').replace(/\s+/g, ' ').trim();
-    if (value.length < NICK_MIN) return { ok: false, error: 'Use at least 2 letters.' };
-    if (value.length > NICK_MAX) return { ok: false, error: 'Max 15 letters.' };
-    if (/@|https?:|www\.|\.com\b/i.test(value)) return { ok: false, error: 'No emails or links, please.' };
-    if (!/^[\p{L}\p{N}][\p{L}\p{N} _.\-]*$/u.test(value)) {
-      return { ok: false, error: 'Only letters, numbers and spaces.' };
-    }
-    if (/\d{6,}/.test(value)) return { ok: false, error: 'No phone numbers, please.' };
-    if (hasBadWord(value)) return { ok: false, error: 'Please pick a kinder nickname.' };
-    return { ok: true, value: value };
+  function validateFirstName(raw) {
+    if (typeof raw !== 'string') return { ok: false, error: 'Type your first name.' };
+    var value = raw.normalize('NFKC').trim();
+    if (!value) return { ok: false, error: 'Type your first name.' };
+    if (!/^[A-Za-z]+$/.test(value)) return { ok: false, error: 'English letters only (A–Z).' };
+    if (value.length < NAME_MIN) return { ok: false, error: 'At least 2 letters.' };
+    if (value.length > NAME_MAX) return { ok: false, error: 'Max 15 letters.' };
+    if (hasBadWord(value)) return { ok: false, error: 'Pick a different name.' };
+    return { ok: true, value: value.charAt(0).toUpperCase() + value.slice(1) };
+  }
+
+  /** Check the last name initial: exactly 1 English letter (A–Z), made a capital. */
+  function validateInitial(raw) {
+    if (typeof raw !== 'string') return { ok: false, error: 'Type 1 letter.' };
+    var value = raw.normalize('NFKC').trim().replace(/\.$/, '');
+    if (!/^[A-Za-z]$/.test(value)) return { ok: false, error: 'Just 1 letter (A–Z).' };
+    return { ok: true, value: value.toUpperCase() };
+  }
+
+  /**
+   * Check first name + initial together.
+   * Returns { ok, firstName, initial, display: "Mahmoud E." } or { ok: false, field, error }.
+   */
+  function validateName(firstName, initial) {
+    var f = validateFirstName(firstName);
+    if (!f.ok) return { ok: false, field: 'firstName', error: f.error };
+    var i = validateInitial(initial);
+    if (!i.ok) return { ok: false, field: 'initial', error: i.error };
+    if (hasBadWord(f.value + i.value)) return { ok: false, field: 'firstName', error: 'Pick a different name.' };
+    return { ok: true, firstName: f.value, initial: i.value, display: displayName(f.value, i.value) };
+  }
+
+  /** "Mahmoud" + "E" -> "Mahmoud E." */
+  function displayName(firstName, initial) {
+    return firstName + ' ' + initial + '.';
   }
 
   /** Check a score for "quiz" or "game". Returns { ok, value } or { ok:false, error }. */
@@ -110,13 +133,16 @@
   }
 
   return {
-    NICK_MIN: NICK_MIN,
-    NICK_MAX: NICK_MAX,
+    NAME_MIN: NAME_MIN,
+    NAME_MAX: NAME_MAX,
     SCORE_RULES: SCORE_RULES,
     ACTIONS: ACTIONS,
     ACTION_NAMES: ACTION_NAMES,
     hasBadWord: hasBadWord,
-    validateNickname: validateNickname,
+    validateFirstName: validateFirstName,
+    validateInitial: validateInitial,
+    validateName: validateName,
+    displayName: displayName,
     validateScore: validateScore,
     validateAction: validateAction
   };

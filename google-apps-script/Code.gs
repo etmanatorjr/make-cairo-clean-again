@@ -1,29 +1,32 @@
 /**
  * ==========================================================================
  * Make Cairo Clean Again — Google Sheets backend (Google Apps Script)
- * Made by Mahmoud Etman 9E
+ * by Mahmoud Etman
  *
  * Paste this whole file into Extensions > Apps Script of my Google Sheet.
  *
  * Tabs it uses (made automatically if missing):
- *   Scores  : time | nickname | type | score
- *   Actions : time | nickname | action
+ *   Scores  : time | first name | initial | type | score
+ *   Actions : time | first name | initial | action
+ * Names show as "Mahmoud E." on the leaderboard.
+ *
+ * If a tab still has the OLD columns (time | nickname | ...), it is renamed to
+ * "Scores (old)" / "Actions (old)" and a fresh tab is made. Nothing is deleted.
  *
  * doPost  -> adds ONE row (a score or an action)
  * doGet   -> returns JSON: top 10 quiz, top 10 game, totals (and my rank)
  *
  * Security:
  *   - Every request must include the SECRET key. Only my Vercel API knows it.
- *     The secret is stored in Project Settings > Script properties as
- *     SHEET_SECRET (so it is not written in this code).
+ *     It is stored in Project Settings > Script properties as SHEET_SECRET.
  *   - LockService: only one write at a time, so two writes at once can't clash.
  * ==========================================================================
  */
 
 var SCORES = 'Scores';
 var ACTIONS = 'Actions';
-var SCORE_HEADERS = ['time', 'nickname', 'type', 'score'];
-var ACTION_HEADERS = ['time', 'nickname', 'action'];
+var SCORE_HEADERS = ['time', 'first name', 'initial', 'type', 'score'];
+var ACTION_HEADERS = ['time', 'first name', 'initial', 'action'];
 
 // Same rules as the app and the Vercel API (a second check, just in case)
 var SCORE_RULES = { quiz: { min: 0, max: 10 }, game: { min: 0, max: 1000 } };
@@ -39,8 +42,8 @@ function setup() {
 
 /* ------------------------------------------------------------------------
    doPost: add a row
-   Body (JSON): { secret, kind: "score", nickname, type, score }
-             or { secret, kind: "action", nickname, action }
+   Body (JSON): { secret, kind: "score", firstName, initial, type, score }
+             or { secret, kind: "action", firstName, initial, action }
    ------------------------------------------------------------------------ */
 function doPost(e) {
   var body;
@@ -51,10 +54,11 @@ function doPost(e) {
   }
   if (!checkSecret_(body.secret)) return json_({ ok: false, error: 'unauthorized' });
 
-  var nickname = cleanNickname_(body.nickname);
-  if (!nickname) return json_({ ok: false, error: 'bad_nickname' });
+  var firstName = cleanFirstName_(body.firstName);
+  var initial = cleanInitial_(body.initial);
+  if (!firstName || !initial) return json_({ ok: false, error: 'bad_name' });
 
-  var row, sheetName;
+  var row, sheetName, headers;
   if (body.kind === 'score') {
     var rule = SCORE_RULES[body.type];
     var score = Number(body.score);
@@ -62,11 +66,13 @@ function doPost(e) {
       return json_({ ok: false, error: 'bad_score' });
     }
     sheetName = SCORES;
-    row = [new Date(), nickname, body.type, score];
+    headers = SCORE_HEADERS;
+    row = [new Date(), firstName, initial, body.type, score];
   } else if (body.kind === 'action') {
     if (ACTION_LIST.indexOf(body.action) === -1) return json_({ ok: false, error: 'bad_action' });
     sheetName = ACTIONS;
-    row = [new Date(), nickname, body.action];
+    headers = ACTION_HEADERS;
+    row = [new Date(), firstName, initial, body.action];
   } else {
     return json_({ ok: false, error: 'bad_kind' });
   }
@@ -75,8 +81,7 @@ function doPost(e) {
   var lock = LockService.getScriptLock();
   if (!lock.tryLock(10000)) return json_({ ok: false, error: 'busy' });
   try {
-    var sheet = getSheet_(sheetName, sheetName === SCORES ? SCORE_HEADERS : ACTION_HEADERS);
-    sheet.appendRow(row);
+    getSheet_(sheetName, headers).appendRow(row);
     SpreadsheetApp.flush();
   } finally {
     lock.releaseLock();
@@ -86,37 +91,38 @@ function doPost(e) {
 
 /* ------------------------------------------------------------------------
    doGet: leaderboard + totals
-   ?secret=...&nickname=Optional
+   ?secret=...&firstName=Optional&initial=Optional
    ------------------------------------------------------------------------ */
 function doGet(e) {
   var p = (e && e.parameter) || {};
   if (!checkSecret_(p.secret)) return json_({ ok: false, error: 'unauthorized' });
 
+  // rows: [time, first name, initial, type, score] and [time, first name, initial, action]
   var scores = readRows_(SCORES, SCORE_HEADERS);
   var actions = readRows_(ACTIONS, ACTION_HEADERS);
 
-  var quizAll = bestPerNickname_(scores, 'quiz');
-  var gameAll = bestPerNickname_(scores, 'game');
+  var quizAll = bestPerPerson_(scores, 'quiz');
+  var gameAll = bestPerPerson_(scores, 'game');
 
   // totals for the "everyone together" card
   var players = {};
   var byAction = { recycle: 0, metro: 0, noburn: 0 };
   var quizzes = 0, games = 0;
   scores.forEach(function (r) {
-    players[String(r[1]).toLowerCase()] = true;
-    if (r[2] === 'quiz') quizzes++;
-    if (r[2] === 'game') games++;
+    players[keyOf_(r[1], r[2])] = true;
+    if (r[3] === 'quiz') quizzes++;
+    if (r[3] === 'game') games++;
   });
   actions.forEach(function (r) {
-    players[String(r[1]).toLowerCase()] = true;
-    if (byAction.hasOwnProperty(r[2])) byAction[r[2]]++;
+    players[keyOf_(r[1], r[2])] = true;
+    if (byAction.hasOwnProperty(r[3])) byAction[r[3]]++;
   });
 
-  var me = p.nickname ? String(p.nickname).toLowerCase() : '';
+  var me = p.firstName ? keyOf_(p.firstName, p.initial || '') : '';
   return json_({
     ok: true,
-    quiz: quizAll.slice(0, 10),
-    game: gameAll.slice(0, 10),
+    quiz: quizAll.slice(0, 10).map(publicRow_),
+    game: gameAll.slice(0, 10).map(publicRow_),
     myRank: { quiz: rankOf_(quizAll, me), game: rankOf_(gameAll, me) },
     totals: {
       actions: actions.length,
@@ -131,10 +137,23 @@ function doGet(e) {
 
 /* ----------------------------- helpers ----------------------------- */
 
-/** Get a tab, making it (with bold headers) if it does not exist yet. */
+/**
+ * Get a tab with the right headers.
+ * - Missing tab: make it.
+ * - Tab with OLD headers: rename it to "<name> (old)" and make a fresh one.
+ */
 function getSheet_(name, headers) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getSheetByName(name);
+  if (sheet && sheet.getLastRow() > 0) {
+    var first = sheet.getRange(1, 1, 1, headers.length).getValues()[0];
+    if (first.join('|') !== headers.join('|')) {
+      var oldName = name + ' (old)';
+      if (ss.getSheetByName(oldName)) oldName = name + ' (old ' + new Date().getTime() + ')';
+      sheet.setName(oldName);
+      sheet = null;
+    }
+  }
   if (!sheet) sheet = ss.insertSheet(name);
   if (sheet.getLastRow() === 0) {
     sheet.getRange(1, 1, 1, headers.length).setValues([headers]).setFontWeight('bold');
@@ -145,28 +164,35 @@ function getSheet_(name, headers) {
 
 /** All data rows of a tab (without the header row). */
 function readRows_(name, headers) {
-  var sheet = getSheet_(name, headers);
-  var values = sheet.getDataRange().getValues();
+  var values = getSheet_(name, headers).getDataRange().getValues();
   return values.slice(1).filter(function (r) { return r[1] !== '' && r[1] !== null; });
 }
 
-/** Best score per nickname, highest first (ties: whoever got it first). */
-function bestPerNickname_(rows, type) {
+/** "Mahmoud", "E" -> "mahmoud|e" (so the same person is counted once) */
+function keyOf_(firstName, initial) {
+  return String(firstName).toLowerCase() + '|' + String(initial).toLowerCase();
+}
+
+/** Best score per person, highest first (ties: whoever got it first). */
+function bestPerPerson_(rows, type) {
   var best = {};
   rows.forEach(function (r) {
-    if (r[2] !== type) return;
-    var name = String(r[1]);
-    var key = name.toLowerCase();
-    var score = Number(r[3]);
+    if (r[3] !== type) return;
+    var key = keyOf_(r[1], r[2]);
+    var score = Number(r[4]);
     var time = r[0] instanceof Date ? r[0].getTime() : new Date(r[0]).getTime();
     var old = best[key];
     if (!old || score > old.score || (score === old.score && time < old.t)) {
-      best[key] = { nickname: name, score: score, t: time };
+      best[key] = { name: String(r[1]) + ' ' + String(r[2]) + '.', score: score, t: time, key: key };
     }
   });
   return Object.keys(best).map(function (k) { return best[k]; })
-    .sort(function (a, b) { return b.score - a.score || a.t - b.t; })
-    .map(function (x) { return { nickname: x.nickname, score: x.score, key: x.nickname.toLowerCase() }; });
+    .sort(function (a, b) { return b.score - a.score || a.t - b.t; });
+}
+
+/** Only send the name and score. */
+function publicRow_(x) {
+  return { name: x.name, score: x.score };
 }
 
 /** My position (1, 2, 3, ...) in a sorted list, or null. */
@@ -186,15 +212,22 @@ function checkSecret_(given) {
 }
 
 /**
- * Last safety check on the nickname: 2-15 characters, and never let it start
- * with = + - @ (Google Sheets would treat that as a formula).
+ * Last safety check: English letters only (A–Z), 2–15 letters.
+ * Letters only also means a name can never start with = + - @ (a formula in Sheets).
  */
-function cleanNickname_(n) {
+function cleanFirstName_(n) {
   if (typeof n !== 'string') return '';
-  n = n.replace(/\s+/g, ' ').trim();
-  if (n.length < 2 || n.length > 15) return '';
-  if (/^[=+\-@]/.test(n)) n = "'" + n;
-  return n;
+  n = n.trim();
+  if (!/^[A-Za-z]{2,15}$/.test(n)) return '';
+  return n.charAt(0).toUpperCase() + n.slice(1);
+}
+
+/** Exactly 1 English letter, as a capital. */
+function cleanInitial_(i) {
+  if (typeof i !== 'string') return '';
+  i = i.trim();
+  if (!/^[A-Za-z]$/.test(i)) return '';
+  return i.toUpperCase();
 }
 
 /** Reply with JSON. */

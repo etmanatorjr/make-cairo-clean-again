@@ -1,5 +1,5 @@
 /* ==========================================================================
-   POST /api/score   { nickname, type: "quiz" | "game", score }
+   POST /api/score   { firstName, initial, type: "quiz" | "game", score }
    Checks everything, then adds a row to the "Scores" tab of my Google Sheet.
    ========================================================================== */
 const Rules = require('../public/js/rules.js');
@@ -20,14 +20,14 @@ module.exports = async function handler(req, res) {
   const body = readBody(req);
   if (!body) return send(res, 400, { ok: false, error: 'Send JSON' });
 
-  const nick = Rules.validateNickname(body.nickname);
-  if (!nick.ok) return send(res, 400, { ok: false, error: 'nickname: ' + nick.error });
+  const name = Rules.validateName(body.firstName, body.initial);
+  if (!name.ok) return send(res, 400, { ok: false, error: name.field + ': ' + name.error });
   const score = Rules.validateScore(body.type, body.score);
   if (!score.ok) return send(res, 400, { ok: false, error: score.error });
 
   try {
-    await writeRow({ kind: 'score', nickname: nick.value, type: body.type, score: score.value });
-    return send(res, 201, { ok: true, saved: { nickname: nick.value, type: body.type, score: score.value } });
+    await writeRow({ kind: 'score', firstName: name.firstName, initial: name.initial, type: body.type, score: score.value });
+    return send(res, 201, { ok: true, saved: { firstName: name.firstName, initial: name.initial, type: body.type, score: score.value } });
   } catch (e) {
     console.error('score failed:', e.message);
     return send(res, e.status || 502, { ok: false, error: e.message });

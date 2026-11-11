@@ -54,8 +54,18 @@ var Store = (function () {
     remove: remove,
     today: today,
     saveBest: saveBest,
-    nickname: function () { return get('nickname', ''); },
-    setNickname: function (n) { return set('nickname', n); },
+    // My name: first name + last name initial, shown as "Mahmoud E."
+    firstName: function () { return get('firstName', ''); },
+    initial: function () { return get('initial', ''); },
+    hasName: function () { return !!(get('firstName', '') && get('initial', '')); },
+    displayName: function () {
+      var f = get('firstName', ''), i = get('initial', '');
+      return f && i ? f + ' ' + i + '.' : '';
+    },
+    setName: function (firstName, initial) {
+      remove('nickname');                 // old version of the app used a nickname
+      return set('firstName', firstName) && set('initial', initial);
+    },
     bestQuiz: function () { return get('bestQuiz', null); },
     bestGame: function () { return get('bestGame', null); }
   };
