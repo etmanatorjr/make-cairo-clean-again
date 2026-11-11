@@ -2,8 +2,15 @@
 
 **Live app: https://make-cairo-clean-again.vercel.app**
 
+Made by Mahmoud Etman
+
 An SDG 11.6 app for teens in Cairo about **air quality** and **waste**, both halves of the goal.
-Made by **Mahmoud Etman 9E**.
+
+## About
+
+I researched SDG 11.6 (air quality and city waste in Cairo), designed the app to match my
+SDG 11.6 presentation, built it with plain HTML, CSS and JavaScript, set up the Google Sheets
+backend and the Vercel deploy, and tested it live.
 
 - Learn about PM2.5, AQI and Cairo's **live air quality** (Open-Meteo API)
 - Learn where Cairo's waste goes and how recycling is growing
@@ -23,15 +30,15 @@ Evidence for my teacher (every extra skill, what I researched, and where it is i
 | Screen | What it does |
 |---|---|
 | Splash | App name, logo, Start button |
-| Nickname | First time only: pick a safe nickname (max 15, no real names/emails, bad words blocked) |
-| Home | Hello + nickname, "everyone together" totals from the sheet, big buttons |
+| Name | First time only: first name (A–Z, max 15) + last name initial (1 letter), shown as "Mahmoud E." Bad words blocked. |
+| Home | Hey + my name, "everyone together" totals from the sheet, buttons |
 | Air | PM2.5 and AQI explained, live Cairo AQI with a tip, bar chart, causes |
 | Waste | Fact cards: how much waste, where it goes, recycling, solutions |
 | Play | Choose Quiz or Game |
 | Quiz | 10 random questions, shuffled answers, right/wrong with the fact, best score |
 | Game | Sort falling trash into 4 bins in 60 seconds, drag or tap |
 | Take Action | Tick real actions daily, streak counter |
-| Leaderboard | Top 10 quiz and top 10 game, my rank highlighted |
+| Leaderboard | Top 10 quiz and top 10 game ("Nour H.", "Mahmoud E."), my rank highlighted |
 | Sources | Works cited + Open-Meteo |
 
 ## How it works
@@ -57,7 +64,7 @@ public/                  the app (plain HTML, CSS, JavaScript, no frameworks)
   index.html             every screen
   css/styles.css         all styles
   js/config.js           the full Vercel URL (so the Android APK can call the API)
-  js/rules.js            nickname/score/action rules, shared by the app AND the server
+  js/rules.js            name/score/action rules, shared by the app AND the server
   js/*.js                one file per part (router, air, quiz, game, actions, ...)
   sw.js, manifest.webmanifest, icons/   PWA
 api/                     Vercel serverless functions
@@ -67,6 +74,7 @@ api/                     Vercel serverless functions
 google-apps-script/Code.gs   paste into Google Apps Script
 dev/                     local server + fake Apps Script for testing
 tests/api.test.js        automatic tests (npm test)
+screenshots/             a screenshot of every screen
 ```
 
 ## Run it on my computer
@@ -81,10 +89,16 @@ Open http://localhost:3000. If `.env.local` has a `SHEET_URL`, it uses the real 
 if not, it uses a fake Apps Script that runs my real `Code.gs`.
 
 ```bash
+npm run dev:mock
+```
+
+Always uses the fake Apps Script, so testing never adds rows to the real sheet.
+
+```bash
 npm test
 ```
 
-Runs 14 automatic tests on the rules, all four API routes, the 302 redirect, wrong secret, bad input, CORS and the rate limit.
+Runs 15 automatic tests on the rules, all four API routes, the 302 redirect, wrong secret, bad input, CORS, the rate limit and moving old nickname tabs aside.
 
 ## Set up the Google Sheet (step by step)
 
@@ -102,7 +116,8 @@ Runs 14 automatic tests on the rules, all four API routes, the 302 redirect, wro
 8. Copy the **Web app URL**. It looks like `https://script.google.com/macros/s/…/exec`. This is `SHEET_URL`.
 
 "Anyone" is needed so Vercel can reach it, but nobody can read or write without the secret.
-If I change `Code.gs` later: **Deploy → Manage deployments → ✏️ → Version: New version → Deploy** (the URL stays the same).
+If I change `Code.gs` later: paste it in, save, then **Deploy → Manage deployments → ✏️ (Edit) → Version: New version → Deploy**.
+The URL stays the same, so nothing changes in Vercel. A changed `Code.gs` does nothing until it is deployed as a new version.
 
 ## Deploy on Vercel (step by step)
 
@@ -119,12 +134,12 @@ Every `git push` to `main` deploys again automatically.
 
 | Route | Body / query | Answer |
 |---|---|---|
-| `POST /api/score` | `{ "nickname": "Eco Falcon", "type": "quiz", "score": 8 }` | `201 { ok: true }` |
-| `POST /api/action` | `{ "nickname": "Eco Falcon", "action": "metro" }` | `201 { ok: true }` |
-| `GET /api/leaderboard` | `?nickname=Eco Falcon` (optional) | top 10 quiz, top 10 game, my rank |
+| `POST /api/score` | `{ "firstName": "Mahmoud", "initial": "E", "type": "quiz", "score": 8 }` | `201 { ok: true }` |
+| `POST /api/action` | `{ "firstName": "Mahmoud", "initial": "E", "action": "metro" }` | `201 { ok: true }` |
+| `GET /api/leaderboard` | `?firstName=Mahmoud&initial=E` (optional) | top 10 quiz, top 10 game (names like "Mahmoud E."), my rank |
 | `GET /api/stats` | | totals: actions, quizzes, games, players |
 
-Rules checked on the server: nickname 2–15 characters, no emails/links/phone numbers/bad words;
+Rules checked on the server: first name 2–15 English letters (A–Z only), initial exactly 1 letter, no bad words;
 type `quiz` (0–10) or `game` (0–1000, multiple of 5); action `recycle`, `metro` or `noburn`.
 Errors: `400` bad input, `405` wrong method, `429` too many requests (10 writes per minute per IP), `502/504` sheet problem.
 
@@ -141,7 +156,18 @@ npx cap open android
 
 The API already allows the Capacitor origins (`https://localhost`, `capacitor://localhost`).
 
+## Google Sheet columns
+
+- **Scores:** time | first name | initial | type | score
+- **Actions:** time | first name | initial | action
+
 ## Sources
 
-EcoHubMap · The Global Goals · IQAir · WHO · Egypt Today · ScienceDirect · Waste & Recycling Magazine · Open-Meteo.
-Full list in the app (Sources screen) and in [`public/js/data.js`](public/js/data.js).
+- [EcoHubMap: Air pollution in Cairo, Egypt](https://www.ecohubmap.com/hot-spot/air-pollution-in-cairo-egypt/1kamamlb968s6k)
+- [The Global Goals: Goal 11](https://www.globalgoals.org/goals/11-sustainable-cities-and-communities/)
+- [IQAir: Cairo](https://www.iqair.com/egypt/cairo)
+- [WHO: Ambient air quality and health](https://www.who.int/news-room/fact-sheets/detail/ambient-(outdoor)-air-quality-and-health)
+- [Egypt Today: Egypt Targets 60% Waste Recycling Rate by 2027](https://www.egypttoday.com/Article/1/140752/Egypt-Targets-60-Waste-Recycling-Rate-by-2027)
+- [ScienceDirect: A smart framework for municipal solid waste collection management: A case study in Greater Cairo Region](https://www.sciencedirect.com/science/article/pii/S2090447923000722)
+- [Waste & Recycling Magazine: An overview of Egypt's waste management landscape](https://www.wasterecyclingmag.com/news/waste-management/an-overview-of-egypt-s-waste-management-landscape)
+- [Open-Meteo Air Quality API](https://open-meteo.com/en/docs/air-quality-api)
