@@ -34,7 +34,7 @@ var App = (function () {
     }).catch(function () { /* not allowed: keep the default */ });
   }
 
-  /* ---------- Toast (small pop-up message) ---------- */
+  /* ---------- Toast (short message at the top) ---------- */
   var toastTimer = 0;
   function toast(msg) {
     var t = $('toast');
@@ -69,15 +69,13 @@ var App = (function () {
   /* ---------- Name screen: first name + last name initial ---------- */
   var firstInput = $('firstNameInput');
   var initialInput = $('initialInput');
-  function updateCount() { $('firstNameCount').textContent = firstInput.value.length + '/15'; }
   function clearErrors() { $('firstNameError').textContent = ''; $('initialError').textContent = ''; }
   function fillNameForm() {
     firstInput.value = Store.firstName();
     initialInput.value = Store.initial();
-    updateCount();
     clearErrors();
   }
-  firstInput.addEventListener('input', function () { updateCount(); clearErrors(); });
+  firstInput.addEventListener('input', clearErrors);
   initialInput.addEventListener('input', clearErrors);
 
   // BUTTON: Save (form submit)
@@ -93,7 +91,7 @@ var App = (function () {
     var firstTime = !Store.hasName();
     Store.setName(check.firstName, check.initial);
     toast(firstTime ? 'Hey ' + check.firstName + '!' : 'Saved. You\'re ' + check.display);
-    Router.go('home', { replace: true, dir: firstTime ? 'fade' : 'back' });
+    Router.go('home', { replace: true });
   });
 
   /* ---------- Sources list ---------- */
@@ -116,7 +114,7 @@ var App = (function () {
   /* ---------- Connect every navigation button ---------- */
   // BUTTON: Start (splash)
   $('btnStart').addEventListener('click', function () {
-    Router.go(Store.hasName() ? 'home' : 'name', { replace: true, dir: 'forward' });
+    Router.go(Store.hasName() ? 'home' : 'name', { replace: true });
   });
   // BUTTON: Change name (home)
   $('btnEditName').addEventListener('click', function () {

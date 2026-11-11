@@ -37,7 +37,7 @@ var Actions = (function () {
       var card = document.createElement('article');
       card.className = 'action-row';
       card.innerHTML =
-        '<span class="circle"><svg aria-hidden="true"><use href="#' + a.icon + '"/></svg></span>' +
+        '<svg class="action-icon" aria-hidden="true"><use href="#' + a.icon + '"/></svg>' +
         '<div class="action-text"><h2 class="action-name"></h2><p class="action-desc"></p></div>' +
         // BUTTON: tick this action as done today
         '<button class="action-btn" type="button"></button>';

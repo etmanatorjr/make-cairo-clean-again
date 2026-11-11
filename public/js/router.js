@@ -1,9 +1,8 @@
 /* ==========================================================================
-   router.js — moves between screens with smooth slide/fade transitions.
+   router.js — moves between screens (instantly, no animation).
 
-   - Tab screens (Home, Air, Waste, Play, Action) fade into each other.
-   - Inner screens (Quiz, Game, Leaderboard, Sources, Name) slide in from
-     the right and slide back out when you press Back.
+   - Tab screens: Home, Air, Waste, Play, Action (with the tab bar).
+   - Inner screens: Quiz, Game, Leaderboard, Sources, Name (with a Back button).
    - Uses the browser history, so the phone/browser Back button also works
      (important for the Android APK later).
    ========================================================================== */
@@ -30,41 +29,24 @@ var Router = (function () {
   /** Let other files run code when a screen opens or closes. */
   function on(name, enter, leave) { hooks[name] = { enter: enter, leave: leave }; }
 
-  /** Show a screen. dir = "forward", "back" or "fade". */
-  function show(name, dir) {
+  /** Show a screen straight away (no animation). */
+  function show(name) {
     if (!exists(name)) name = 'home';
     if (name === current) return;
     var next = el(name);
-    var prev = current ? el(current) : null;
 
     if (current && hooks[current] && hooks[current].leave) hooks[current].leave();
-
-    // animate the old screen out
-    if (prev) {
-      prev.className = prev.className.replace(/\banim-\S+/g, '').trim();
-      prev.classList.add('anim-out-' + dir);
-      var prevName = current;
-      var done = function () {
-        if (current !== prevName) prev.hidden = true; // (unless we came straight back)
-        prev.classList.remove('anim-out-' + dir);
-      };
-      setTimeout(done, 360);
-    }
-
-    // animate the new screen in
-    next.className = next.className.replace(/\banim-\S+/g, '').trim();
+    if (current) el(current).hidden = true;
     next.hidden = false;
-    next.classList.add('anim-in-' + dir);
-    setTimeout(function () { next.classList.remove('anim-in-' + dir); }, 380);
     var body = next.querySelector('.screen-body');
-    if (body && dir !== 'back') body.scrollTop = 0;
+    if (body) body.scrollTop = 0;
 
     current = name;
     updateChrome(name);
 
     // tell screen readers what screen this is: focus its title
     var title = next.querySelector('h1');
-    if (title) setTimeout(function () { title.focus({ preventScroll: true }); }, 50);
+    if (title) title.focus({ preventScroll: true });
     document.title = next.getAttribute('data-title') + ' · Make Cairo Clean Again';
 
     if (hooks[name] && hooks[name].enter) hooks[name].enter();
@@ -92,7 +74,6 @@ var Router = (function () {
   function go(name, opts) {
     opts = opts || {};
     if (!exists(name) || name === current) return;
-    var dir = opts.dir || (isTab(name) && (!current || isTab(current)) ? 'fade' : 'forward');
     if (opts.replace || (isTab(name) && current && isTab(current))) {
       history.replaceState({ screen: name, i: index }, '', '#' + name);
     } else if (isTab(name) && current && !isTab(current)) {
@@ -102,7 +83,7 @@ var Router = (function () {
       index++;
       history.pushState({ screen: name, i: index }, '', '#' + name);
     }
-    show(name, dir);
+    show(name);
   }
 
   /** The Back button on inner screens. */
@@ -110,28 +91,25 @@ var Router = (function () {
     if (history.state && history.state.i > 0) {
       history.back();           // popstate below shows the previous screen
     } else {
-      go(parentOf(current), { replace: true, dir: 'back' });
+      go(parentOf(current), { replace: true });
     }
   }
 
   // Browser / phone Back and Forward buttons
   window.addEventListener('popstate', function (e) {
     var state = e.state || { screen: (location.hash || '#home').slice(1), i: 0 };
-    var dir = state.i < index ? 'back' : 'forward';
     index = state.i;
     // you need a name before you can use the other screens
     var target = state.screen;
     if (!Store.hasName() && target !== 'splash' && target !== 'name') target = 'splash';
-    show(target, dir);
+    show(target);
   });
 
   /** First screen when the app opens. */
   function start(firstScreen) {
     index = 0;
-    tabBar.classList.add('no-anim');            // no slide on the very first screen
-    setTimeout(function () { tabBar.classList.remove('no-anim'); }, 50);
     history.replaceState({ screen: firstScreen, i: 0 }, '', '#' + firstScreen);
-    show(firstScreen, 'fade');
+    show(firstScreen);
   }
 
   return {

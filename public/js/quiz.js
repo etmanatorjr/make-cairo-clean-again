@@ -109,12 +109,12 @@ var Quiz = (function () {
       score >= 4 ? 'Not bad. Check Air and Waste, then go again.' :
       'Read Air and Waste, then try again.';
     $('quizEndBest').textContent = isBest ? 'New best!' : 'Your best: ' + bestText();
-    $('quizSync').textContent = 'Saving…';
+    $('quizSync').textContent = '';
     showPart('quizEnd');
 
     Api.sendScore('quiz', score).then(function (result) {
       $('quizSync').textContent =
-        result === 'sent' ? 'Saved to the leaderboard.' :
+        result === 'sent' ? '' :
         result === 'queued' ? "No internet. It'll send later." :
         "Couldn't save this one.";
     });

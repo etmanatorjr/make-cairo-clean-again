@@ -27,7 +27,7 @@ var Air = (function () {
   }
 
   /** Put an AQI result on the Air screen and the Home tile. */
-  function render(result, note) {
+  function render(result) {
     var aqi = Math.round(result.aqi);
     var level = levelFor(aqi);
     $('aqiCard').style.setProperty('--aqi', level.color);
@@ -36,9 +36,6 @@ var Air = (function () {
     $('aqiLevel').textContent = level.name;
     $('aqiPm').textContent = 'PM2.5 ' + result.pm25.toFixed(1) + ' µg/m³';
     $('aqiTip').textContent = level.tip;
-    var t = new Date(result.fetchedAt);
-    $('aqiTime').textContent = (note ? note + ' · ' : 'Live · ') + 'updated ' +
-      t.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) + ' · Open-Meteo';
     $('homeAqi').textContent = 'AQI ' + aqi;
     $('homeAqi').style.background = level.color;
   }
@@ -48,14 +45,13 @@ var Air = (function () {
     $('aqiLevel').textContent = 'No data';
     $('aqiPm').textContent = 'Check your internet';
     $('aqiTip').textContent = "Take the metro and don't burn trash.";
-    $('aqiTime').textContent = 'Tap refresh to try again';
     $('homeAqi').textContent = 'AQI --';
   }
 
   /** Load the live AQI (uses the saved one if it is fresh, unless force = true). */
   function load(force) {
     var cached = Store.get(CACHE_KEY, null);
-    if (cached) render(cached, Date.now() - cached.fetchedAt > FRESH_MS ? 'Saved' : null);
+    if (cached) render(cached);
     if (!force && cached && Date.now() - cached.fetchedAt < FRESH_MS) return Promise.resolve(cached);
     if (loading) return Promise.resolve(cached);
     loading = true;
@@ -76,7 +72,7 @@ var Air = (function () {
       .catch(function (err) {
         console.warn('AQI failed:', err.message);
         if (!cached) renderError();
-        else render(cached, 'Offline');
+        else render(cached);
       })
       .finally(function () { loading = false; });
   }

@@ -51,13 +51,13 @@ var Leaderboard = (function () {
 
   /** Load the newest scores from the server. */
   function load() {
-    $('lbStatus').textContent = 'Loading…';
+    $('lbStatus').textContent = '';
     render();
     return Api.flushQueue().then(function () { return Api.leaderboard(); }).then(function (r) {
       if (!r.ok) throw new Error(r.data && r.data.error || 'HTTP ' + r.status);
       data = { quiz: r.data.quiz || [], game: r.data.game || [], myRank: r.data.myRank || {} };
       Store.set(CACHE_KEY, data);
-      $('lbStatus').textContent = 'Live from the Google Sheet';
+      $('lbStatus').textContent = '';
       render();
     }).catch(function () {
       $('lbStatus').textContent = data ? 'Offline. Showing the last scores.' : "Can't load. Check your internet.";

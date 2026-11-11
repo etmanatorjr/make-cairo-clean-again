@@ -118,10 +118,10 @@ var Game = (function () {
     showOverlay("Time's up",
       'You got ' + score + ' points. ' + (isBest ? 'New best!' : 'Your best: ' + Store.bestGame() + '.'),
       'Go again', 'Play the game again', false);
-    $('gameSync').textContent = 'Saving…';
+    $('gameSync').textContent = '';
     Api.sendScore('game', score).then(function (result) {
       $('gameSync').textContent =
-        result === 'sent' ? 'Saved to the leaderboard.' :
+        result === 'sent' ? '' :
         result === 'queued' ? "No internet. It'll send later." :
         "Couldn't save this one.";
     });
@@ -203,12 +203,10 @@ var Game = (function () {
     it.el.style.transform = 'translate(' + it.x + 'px,' + it.y + 'px)';
   }
 
-  function removeItem(it, animClass) {
+  function removeItem(it) {
     items.splice(items.indexOf(it), 1);
     if (selected === it) selected = null;
-    it.el.classList.add(animClass);
-    it.el.disabled = true;
-    setTimeout(function () { it.el.remove(); }, 450);
+    it.el.remove();
   }
 
   function clearItems() {
@@ -219,7 +217,7 @@ var Game = (function () {
 
   function miss(it) {
     floatText(it.x + 10, it.y, 'Missed', 'bad');
-    removeItem(it, 'pop-miss');
+    removeItem(it);
   }
 
   /** Lowest item on screen (closest to the bins). */
@@ -243,10 +241,12 @@ var Game = (function () {
     if (right) score += 10;
     else score = Math.max(0, score - 5);
     floatText(it.x + 14, it.y, right ? '+10' : '−5', right ? 'good' : 'bad');
+    // outline the bin green-ish (right) or red (wrong) for a moment
     binEl.classList.remove('flash-right', 'flash-wrong');
-    void binEl.offsetWidth;   // restart the animation
     binEl.classList.add(right ? 'flash-right' : 'flash-wrong');
-    removeItem(it, right ? 'pop-right' : 'pop-wrong');
+    clearTimeout(binEl._flash);
+    binEl._flash = setTimeout(function () { binEl.classList.remove('flash-right', 'flash-wrong'); }, 350);
+    removeItem(it);
     if (navigator.vibrate && !right) navigator.vibrate(40);
     setHud();
   }
@@ -259,7 +259,7 @@ var Game = (function () {
     f.style.left = x + 'px';
     f.style.top = Math.max(10, y) + 'px';
     area.appendChild(f);
-    setTimeout(function () { f.remove(); }, 750);
+    setTimeout(function () { f.remove(); }, 600);
   }
 
   /** Which bin is under this point (or null)? */
