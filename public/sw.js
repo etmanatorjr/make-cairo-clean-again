@@ -6,7 +6,7 @@
    - /api and Open-Meteo: never cached here (the app handles offline itself).
    Change VERSION when you change the app so old caches are deleted.
    ========================================================================== */
-const VERSION = 'mcca-v3';
+const VERSION = 'mcca-v4';
 const SHELL = [
   './',
   'index.html',
@@ -22,6 +22,7 @@ const SHELL = [
   'js/game.js',
   'js/actions.js',
   'js/leaderboard.js',
+  'js/native.js',
   'js/app.js',
   'manifest.webmanifest',
   'icons/icon.svg',

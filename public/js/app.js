@@ -36,12 +36,12 @@ var App = (function () {
 
   /* ---------- Toast (short message at the top) ---------- */
   var toastTimer = 0;
-  function toast(msg) {
+  function toast(msg, ms) {
     var t = $('toast');
     t.textContent = msg;
     t.classList.add('is-on');
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(function () { t.classList.remove('is-on'); }, 2600);
+    toastTimer = setTimeout(function () { t.classList.remove('is-on'); }, ms || 2600);
   }
 
   /* ---------- Home: my name + "everyone together" totals ---------- */
@@ -167,8 +167,13 @@ var App = (function () {
   }
   window.addEventListener('online', flush);
 
+  /* ---------- No internet: say so simply, results are kept and sent later ---------- */
+  var OFFLINE_MSG = 'No internet, your scores will save later';
+  window.addEventListener('offline', function () { toast(OFFLINE_MSG, 4000); });
+
   /* ---------- PWA: service worker for offline use ---------- */
-  if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+  // Only on the website. Never inside the Android app (it has its files already).
+  if (!Native.isNative && 'serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
     window.addEventListener('load', function () {
       navigator.serviceWorker.register('sw.js').catch(function (e) { console.warn('SW failed', e); });
     });
@@ -179,8 +184,10 @@ var App = (function () {
   var known = hash && document.getElementById('screen-' + hash);
   var first = Store.hasName() && known && hash !== 'splash' && hash !== 'name' ? hash : 'splash';
   Router.start(first);
+  Native.init();
+  if (navigator.onLine === false) toast(OFFLINE_MSG, 4000);
   flush();
   Air.load(false);   // warm up the live AQI for the Home tile
 
-  return { toast: toast, refreshStats: refreshStats };
+  return { toast: toast, refreshStats: refreshStats, OFFLINE_MSG: OFFLINE_MSG };
 })();

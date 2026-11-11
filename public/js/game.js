@@ -122,7 +122,7 @@ var Game = (function () {
     Api.sendScore('game', score).then(function (result) {
       $('gameSync').textContent =
         result === 'sent' ? '' :
-        result === 'queued' ? "No internet. It'll send later." :
+        result === 'queued' ? 'No internet, your scores will save later' :
         "Couldn't save this one.";
     });
   }

@@ -71,7 +71,7 @@ var Actions = (function () {
         App.toast('Nice. Added to the Cairo total.');
         App.refreshStats();
       } else if (result === 'queued') {
-        App.toast("Saved. It'll send when you're online.");
+        App.toast(App.OFFLINE_MSG, 4000);
       }
     });
   }

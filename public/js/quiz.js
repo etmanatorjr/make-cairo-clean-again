@@ -115,7 +115,7 @@ var Quiz = (function () {
     Api.sendScore('quiz', score).then(function (result) {
       $('quizSync').textContent =
         result === 'sent' ? '' :
-        result === 'queued' ? "No internet. It'll send later." :
+        result === 'queued' ? 'No internet, your scores will save later' :
         "Couldn't save this one.";
     });
   }
