@@ -239,3 +239,18 @@ After testing version 1, I made two big improvements.
   1. Items inside scrolling screens could shrink to 0 height (the "Cairo 40%" bar disappeared).
   2. The tab bar flashed on the splash while the page loaded.
   3. The olive blob was cut off by the status bar.
+
+### 5.4 Live test of version 2 (11 Nov 2026)
+After pasting the new `Code.gs` and deploying it as a **new version** (Deploy → Manage deployments → Edit → New version, same URL), I tested on https://make-cairo-clean-again.vercel.app:
+
+| Test | Result |
+|---|---|
+| Checked which `Code.gs` the Sheet was running | New version (the old one asked for a nickname) |
+| Entered my name on the Name screen | Home shows "MAHMOUD E." |
+| Full quiz | 8/10, "Saved to the leaderboard" |
+| Full 60-second game (23 taps + 22 drags) | 450 points, saved |
+| Ticked "Take the metro" | "Nice. Added to the Cairo total.", streak 1 |
+| Leaderboard screen | "Mahmoud E. (you)" #1 on Quiz and Game, read live from the Google Sheet ([`screenshots/14-live-leaderboard.jpg`](screenshots/14-live-leaderboard.jpg)) |
+| Google Sheet checked directly | Exactly 3 new rows (1 quiz, 1 game, 1 action), all with **"Mahmoud E."** in the **Name** column |
+
+**Problem I hit:** after pasting the new code, the Sheet still ran the old version. Saving code in Apps Script doesn't change the live web app; you have to deploy it as a new version. Choosing "New deployment" instead would make a new URL that Vercel doesn't know about.
