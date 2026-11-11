@@ -14,7 +14,7 @@ and exactly where it is in the code (file:line). The Git commit history shows th
 - **What it does:** shows Cairo's air quality right now (US AQI and PM2.5), colour-coded, with a tip for the day. Saves the last result so it still shows offline.
 - **What I researched:** what an API is; how `fetch()` and JSON work; how to build a URL with query parameters (latitude, longitude, `current=us_aqi,pm2_5`); the US AQI colour levels; handling errors when there is no internet.
 - **Docs:** https://open-meteo.com/en/docs/air-quality-api · https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
-- **Code:** `public/js/air.js:22` (API URL), `public/js/air.js:56` (load + cache), `public/js/air.js:64` (fetch), AQI levels and tips in `public/js/data.js` (`AQI_LEVELS`).
+- **Code:** `public/js/air.js:22` (API URL), `public/js/air.js:52` (load + cache), `public/js/air.js:60` (fetch), AQI levels and tips in `public/js/data.js` (`AQI_LEVELS`).
 
 ### 1.2 Serverless backend (Vercel Functions)
 - **What it does:** four API routes run on Vercel's servers, so the Google Sheet URL and secret are hidden from users.
@@ -57,7 +57,7 @@ and exactly where it is in the code (file:line). The Git commit history shows th
 - **What it does:** saves my name, best scores, daily actions, streak, last AQI and leaderboard on the phone. If sending a score or action fails (no internet, server down), it is kept in a queue and sent the next time the app opens or the internet comes back. Bad data is dropped instead of retried forever.
 - **What I researched:** `localStorage` and JSON; `try/catch` (private mode can block storage); the browser `online` event; which errors are worth retrying (network, 429, 5xx) and which are not (400).
 - **Docs:** https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage · https://developer.mozilla.org/en-US/docs/Web/API/Window/online_event
-- **Code:** `public/js/storage.js:6`; queue in `public/js/api.js:53` (enqueue), `:63` (send or queue), `:76` (flush); retry triggers in `public/js/app.js:170` (online) and `:184` (app opens).
+- **Code:** `public/js/storage.js:6`; queue in `public/js/api.js:53` (enqueue), `:63` (send or queue), `:76` (flush); retry triggers in `public/js/app.js:168` (online) and `:182` (app opens).
 
 ### 1.7 Randomized quiz
 - **What it does:** 10 questions picked from a bank of 15 (all from my Air and Waste facts), in a new random order every time; the 4 answers are shuffled too. Shows right/wrong with the fact, final score, best score, and sends the score to the sheet.
@@ -72,28 +72,29 @@ and exactly where it is in the code (file:line). The Git commit history shows th
 - **Code (`public/js/game.js`):**
   - game loop at line 145
   - spawning items at 174
-  - scoring at 239
+  - scoring at 237
   - bin hit test at 266
   - drag at 279
   - auto-pause at 345
 
-### 1.9 Smooth screen transitions
-- **What it does:** inner screens slide in from the right and slide back on Back; tabs fade. Uses the browser History API, so the phone's Back button works too (needed for Android). Motion is reduced if the user turns it off in their settings.
-- **What I researched:** CSS `@keyframes` and `transform`; `history.pushState` and `popstate`; `prefers-reduced-motion`.
-- **Docs:** https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_animations · https://developer.mozilla.org/en-US/docs/Web/API/History_API · https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion
-- **Code:** `public/js/router.js:34` (show + animate), `:103` (pushState), `:118` (popstate); `public/css/styles.css:133` and `:139` (animations), `:508` (reduced motion).
+### 1.9 Screen navigation (History API)
+- **What it does:** one screen shows at a time. Tabs switch between the main screens, every inner screen has a Back button, and the phone's own Back button works too (needed for Android), because every screen change is saved in the browser history.
+- **Change in version 3:** versions 1 and 2 slid screens in and out with CSS animations (`@keyframes`). In version 3 I removed every animation on purpose to make the app look simpler (see 5.5), so screens now switch instantly. The navigation and Back buttons work exactly the same.
+- **What I researched:** `history.pushState`, `history.replaceState` and the `popstate` event; for versions 1–2 also CSS `@keyframes` and `prefers-reduced-motion`.
+- **Docs:** https://developer.mozilla.org/en-US/docs/Web/API/History_API · https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_animations
+- **Code:** `public/js/router.js:33` (show a screen), `:84` (pushState), `:99` (popstate).
 
 ### 1.10 PWA (manifest + service worker)
 - **What it does:** the app can be installed on a phone's home screen and opens offline. The service worker saves the app files; app files are loaded network-first (always fresh online), fonts cache-first, API calls are never cached.
 - **What I researched:** the web app manifest; service worker install/activate/fetch events; caching strategies; maskable icons.
 - **Docs:** https://web.dev/learn/pwa/ · https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API · https://developer.mozilla.org/en-US/docs/Web/Manifest
-- **Code:** `public/manifest.webmanifest`, `public/sw.js:32` (install), `public/sw.js:44` (fetch), registration `public/js/app.js:173`, link `public/index.html:11`, icons in `public/icons/`.
+- **Code:** `public/manifest.webmanifest`, `public/sw.js:32` (install), `public/sw.js:44` (fetch), registration `public/js/app.js:171`, link `public/index.html:11`, icons in `public/icons/`.
 
 ### 1.11 iPhone 18 Pro screen + responsive layout
 - **What it does:** on a laptop it shows only the 402 × 874 screen (55px corners, Dynamic Island, live clock, signal, real battery level when allowed, home indicator), scaled to fit. On a real phone (under 500px) it fills the whole screen and respects the notch (safe areas).
 - **What I researched:** CSS `transform: scale`; media queries; `env(safe-area-inset-*)`; `100dvh`; the Battery Status API.
 - **Docs:** https://developer.mozilla.org/en-US/docs/Web/CSS/env · https://developer.mozilla.org/en-US/docs/Web/API/Battery_Status_API
-- **Code:** `public/css/styles.css:58` (screen), `:498` (real phone), `public/js/app.js:10` (scale to fit).
+- **Code:** `public/css/styles.css:54` (screen), `:435` (real phone), `public/js/app.js:10` (scale to fit).
 
 ### 1.12 Labels and accessibility
 - **What it does:** every screen has a clear `<h1>` title; every button has visible text and/or an `aria-label`; every image has `alt` text; icons are `aria-hidden`; the screen title gets focus when a screen opens (screen readers); live regions announce scores and toasts. A comment above every screen and button in `public/index.html` says what it is.
@@ -187,31 +188,32 @@ After testing version 1, I made two big improvements.
 - **Docs:** https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions · https://developers.google.com/apps-script/reference/spreadsheet/sheet#setName(String)
 - **Code:**
   - Rules (`public/js/rules.js`): first name at line 79, initial at 91, whole name at 102, "Mahmoud E." at 112.
-  - App: `public/js/storage.js:61`, `public/js/app.js:69`, `public/index.html:123`.
+  - App: `public/js/storage.js:61`, `public/js/app.js:69`, `public/index.html:120`.
   - Server: `api/score.js:23`, `api/action.js:23`, `api/leaderboard.js:22`.
   - Sheet (`google-apps-script/Code.gs`): columns at line 31, "Mahmoud E." at 63, moving old tabs aside at 149, best score per person at 186, A–Z check at 227.
 - **Tests:** `tests/api.test.js:13` (name rules, including rejecting Arabic letters, spaces, numbers and bad words). Other tests check that an old nickname tab is kept as "Scores (old)" and that a tab I made by hand with capital headers is kept. 15/15 pass.
 
 ### 5.2 Colours and style from my SDG 11.6 PowerPoint
 - **Why:** version 1 looked like a generic app template. Version 2 matches my presentation, so the app and the slides feel like one project.
+- **Where the version 2 code is:** commit `6a0a1b4` ("Part 3: slide-style design and casual text") in the GitHub history. Some of it was removed in version 3 (see 5.5), so those parts are marked below.
 - **Colours:**
   - Only the 13 colours from my PowerPoint are used anywhere. They're CSS variables in `:root`, with a comment saying where they come from (`public/css/styles.css:7–22`).
   - Every other colour was replaced, including greens, reds, greys, black, gradients, see-through overlays and soft shadows.
   - Checked with a search of all CSS, HTML and JS files: no colour outside the 13 is left.
 - **Style:**
   - Flat colours only, with no gradients, glass blur, glows or soft shadows.
-  - Headings in UPPERCASE DM Sans, like "CAUSES OF POOR AIR QUALITY" (`styles.css:143`).
-  - Olive blob and dash shapes in the corners, like my slides (`styles.css:33`, `:108`).
-  - Simple flat icons in dark circles with a label next to them, like my Causes slide (`styles.css:175`, `index.html:290`).
-  - The PM2.5 chart copies my slide (`index.html:278`, `styles.css:296`):
+  - Headings in UPPERCASE DM Sans, like "CAUSES OF POOR AIR QUALITY".
+  - Olive blob and dash shapes in the corners, like my slides. *(Removed in version 3.)*
+  - Simple flat icons in dark circles with a label next to them, like my Causes slide. *(Version 3 keeps the icons and labels but removes the circles.)*
+  - The PM2.5 chart copies my slide:
     - orange Cairo bars and a light-teal WHO bar
     - values on top
     - "Source: IQAir" underneath
     - title "Cairo air pollution (PM2.5) is 8x the safe limit"
-  - Fewer animations: a simple slide between screens, nothing bouncy (`styles.css:132`).
-  - Mixed layouts instead of rows of identical cards: dark bands, uneven split rows and list rows (`styles.css:232`).
+  - Fewer animations: a simple slide between screens, nothing bouncy. *(Version 3 removes all animations.)*
+  - Mixed layouts instead of rows of identical cards: dark bands, uneven split rows and list rows.
   - All app text rewritten short and casual, like a teen talking to teens. My research facts are still word for word.
-  - The splash screen says "by Mahmoud Etman" at the bottom (`index.html:119`).
+  - The splash screen says "by Mahmoud Etman" at the bottom. *(Removed in version 3.)*
 - **What I researched:** CSS custom properties (variables); SVG shapes as CSS backgrounds; CSS Grid for uneven layouts.
 - **Docs:** https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties · https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_grid_layout
 
@@ -220,21 +222,21 @@ After testing version 1, I made two big improvements.
 - **Labels:** **46 buttons, 0 without a label**; 0 images without alt text; 0 screens without a title; 0 inputs without a label. The comments above every screen and button are still there.
 - **Phone width (375px):** the app fills the screen with no frame and no sideways scrolling.
 - **Screenshots of every screen:**
-  - `01-splash.jpg`
-  - `02-name.jpg` (with an error showing)
-  - `03-home.jpg`
-  - `04-air.jpg`
-  - `05-air-chart-causes.jpg`
-  - `06-waste.jpg`
-  - `07-play.jpg`
-  - `08-quiz-question.jpg` (wrong answer + fact)
-  - `09-quiz-score.jpg`
-  - `10-game.jpg`
-  - `11-action.jpg`
-  - `12-leaderboard.jpg`
-  - `13-sources.jpg`
+  - `01-splash.png`
+  - `02-name.png` (with an error showing)
+  - `03-home.png`
+  - `04-air.png`
+  - `05-air-chart-causes.png`
+  - `06-waste.png`
+  - `07-play.png`
+  - `08-quiz-question.png` (wrong answer + fact)
+  - `09-quiz-score.png`
+  - `10-game.png`
+  - `11-action.png`
+  - `12-leaderboard.png`
+  - `13-sources.png`
 
-  They're all in the [`screenshots/`](screenshots/) folder.
+  They're all in the [`screenshots/`](screenshots/) folder. They were retaken for version 3 (see 5.5), so they show the current look.
 - **Bugs found and fixed while testing:**
   1. Items inside scrolling screens could shrink to 0 height (the "Cairo 40%" bar disappeared).
   2. The tab bar flashed on the splash while the page loaded.
@@ -254,3 +256,22 @@ After pasting the new `Code.gs` and deploying it as a **new version** (Deploy �
 | Google Sheet checked directly | Exactly 3 new rows (1 quiz, 1 game, 1 action), all with **"Mahmoud E."** in the **Name** column |
 
 **Problem I hit:** after pasting the new code, the Sheet still ran the old version. Saving code in Apps Script doesn't change the live web app; you have to deploy it as a new version. Choosing "New deployment" instead would make a new URL that Vercel doesn't know about.
+
+### 5.5 Simpler look (version 3)
+- **Why:** when I looked at version 2 again, it felt busy and "AI-generated": decoration shapes, circles behind every icon, little grey notes everywhere and things sliding around. I wanted it to look plain and made by me.
+- **What I changed:**
+  - **Plain green screens.** No olive shapes or circles. Icons sit next to their labels with nothing behind them, and the Play, Action and Quiz icons were redrawn without circle outlines (`public/index.html:31`).
+  - **No credit line in the app.** Removed "by Mahmoud Etman" from the splash screen and the Sources screen.
+  - **No small grey text.** Removed "Live from the Google Sheet", the AQI "updated" time, form hints, subtitles and footnotes. Status messages now only show when something goes wrong, like no internet (`public/js/leaderboard.js:54`).
+  - **No animations at all.** Screens switch instantly (`public/js/router.js:33`, `public/css/styles.css:95`). The tab bar and the toast message appear instantly (`styles.css:432`), and sorted trash disappears instantly (`public/js/game.js:206`). Only the falling trash in the game still moves, because that's the game itself.
+  - **Calmer details.** No tiny orange labels above headings, no orange quote bars, smaller corners and fewer pill shapes.
+  - Still only the 13 PowerPoint colours, UPPERCASE DM Sans headings, and the PM2.5 chart from my slide.
+- **Checks after the change:**
+  - **Navigation:** 29/29 passed.
+  - **Labels:** 46 buttons, 0 without a label; 0 images without alt text; 0 screens without a title; 0 inputs without a label.
+  - **Style:** the stylesheet has 0 animation or transition rules and 0 grey-text rules.
+  - **Tests:** 15/15 pass.
+  - **Live site:** updated within about 20 seconds of pushing.
+- **New screenshots:** every screen was retaken with headless Chrome, controlled from a small Node.js script through the Chrome DevTools Protocol. That way the pictures don't depend on what's open on my screen.
+- **What I researched:** the Chrome DevTools Protocol (`Page.captureScreenshot`, `Runtime.evaluate`); why animations can make an app feel less clear.
+- **Docs:** https://chromedevtools.github.io/devtools-protocol/ · https://developer.mozilla.org/en-US/docs/Web/API/History_API
