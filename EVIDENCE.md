@@ -14,7 +14,7 @@ and exactly where it is in the code (file:line). The Git commit history shows th
 - **What it does:** shows Cairo's air quality right now (US AQI and PM2.5), colour-coded, with a tip for the day. Saves the last result so it still shows offline.
 - **What I researched:** what an API is; how `fetch()` and JSON work; how to build a URL with query parameters (latitude, longitude, `current=us_aqi,pm2_5`); the US AQI colour levels; handling errors when there is no internet.
 - **Docs:** https://open-meteo.com/en/docs/air-quality-api · https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
-- **Code:** `public/js/air.js:22` (API URL), `public/js/air.js:54` (load + cache), `public/js/air.js:62` (fetch), AQI levels and tips in `public/js/data.js` (`AQI_LEVELS`).
+- **Code:** `public/js/air.js:22` (API URL), `public/js/air.js:56` (load + cache), `public/js/air.js:64` (fetch), AQI levels and tips in `public/js/data.js` (`AQI_LEVELS`).
 
 ### 1.2 Serverless backend (Vercel Functions)
 - **What it does:** four API routes run on Vercel's servers, so the Google Sheet URL and secret are hidden from users.
@@ -24,28 +24,28 @@ and exactly where it is in the code (file:line). The Git commit history shows th
 - **Code:** `api/score.js:9`, `api/action.js:9`, `api/leaderboard.js:10`, `api/stats.js:9`.
 
 ### 1.3 Server validation, rate limit and CORS
-- **What it does:** the server checks every input again (never trust the app): nickname 2–15 characters, no emails, links, phone numbers or bad words; type and action from a fixed list; score in a sane range (quiz 0–10, game 0–1000 and a multiple of 5). Max 10 writes per minute per IP. Only my site and the Android app may call the API from a browser.
+- **What it does:** the server checks every input again (never trust the app): first name 2–15 English letters (A–Z only), last name initial exactly 1 letter, no bad words; type and action from a fixed list; score in a sane range (quiz 0–10, game 0–1000 and a multiple of 5). Max 10 writes per minute per IP. Only my site and the Android app may call the API from a browser.
 - **What I researched:** input validation; HTTP 429 "Too Many Requests" and `Retry-After`; CORS and preflight (`OPTIONS`) requests; the Capacitor app origin (`https://localhost`).
 - **Docs:** https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS · https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429
-- **Code:** shared rules `public/js/rules.js:79` (nickname), `public/js/rules.js:60` (bad words), `public/js/rules.js:94` (score). Rate limit `api/_lib/http.js:56`. CORS `api/_lib/http.js:22`.
+- **Code:** shared rules `public/js/rules.js:102` (name), `public/js/rules.js:60` (bad words), `public/js/rules.js:117` (score). Rate limit `api/_lib/http.js:56`. CORS `api/_lib/http.js:22`.
 - **Note:** `rules.js` is ONE file used by both the app and the server (`require('../public/js/rules.js')`), so they can never disagree.
 
 ### 1.4 Google Sheets database (Google Apps Script)
-- **What it does:** a Google Sheet is the database. Tabs `Scores` (time, nickname, type, score) and `Actions` (time, nickname, action) are made automatically. `doPost` adds a row, `doGet` returns the top 10 quiz, top 10 game, totals and my rank as JSON.
+- **What it does:** a Google Sheet is the database. Tabs `Scores` (Time, Name, Type, Score) and `Actions` (Time, Name, Action) are made automatically if missing. `doPost` adds a row, `doGet` returns the top 10 quiz, top 10 game, totals and my rank as JSON.
 - **What I researched:**
   - Apps Script web apps (`doGet`, `doPost`, "Execute as me", "Anyone").
   - `ContentService` to return JSON.
   - `LockService`, so two writes at the same moment can't clash.
   - `PropertiesService`, to keep the secret out of the code.
-  - **Formula injection:** a nickname starting with `=` would run as a formula in Sheets, so it gets an `'` in front.
+  - **Formula injection:** a name starting with `=` would run as a formula in Sheets. Version 1 put an `'` in front of it; version 2 only allows the letters A–Z, so a formula can't get in at all.
 - **Docs:** https://developers.google.com/apps-script/guides/web · https://developers.google.com/apps-script/guides/content · https://developers.google.com/apps-script/reference/lock/lock-service · https://developers.google.com/apps-script/guides/properties · https://owasp.org/www-community/attacks/CSV_Injection
 - **Code (`google-apps-script/Code.gs`):**
-  - `doPost` at line 45, with the lock at 75–82
-  - `doGet` at line 91
-  - tabs and headers at line 135
-  - best score per nickname at line 154
-  - secret check at line 180
-  - formula guard at line 192
+  - `doPost` at line 51, with the lock at 85–91
+  - `doGet` at line 100
+  - tabs and headers at line 149
+  - best score per person at line 186
+  - secret check at line 215
+  - name check (letters only, which also blocks formulas) at line 227
 
 ### 1.5 Handling the Apps Script redirect
 - **What it does:** Google answers a web app request with **302 Found** and a `Location` header; the JSON is at that second address. The server follows it by hand (`redirect: 'manual'`) and GETs the Location, so the POST that adds the row runs exactly once.
@@ -54,16 +54,16 @@ and exactly where it is in the code (file:line). The Git commit history shows th
 - **Code:** `api/_lib/sheet.js:31` (follow the redirect), `api/_lib/sheet.js:36` and `:59` (`redirect: 'manual'`).
 
 ### 1.6 localStorage with offline retry
-- **What it does:** saves the nickname, best scores, daily actions, streak, last AQI and leaderboard on the phone. If sending a score or action fails (no internet, server down), it is kept in a queue and sent the next time the app opens or the internet comes back. Bad data is dropped instead of retried forever.
+- **What it does:** saves my name, best scores, daily actions, streak, last AQI and leaderboard on the phone. If sending a score or action fails (no internet, server down), it is kept in a queue and sent the next time the app opens or the internet comes back. Bad data is dropped instead of retried forever.
 - **What I researched:** `localStorage` and JSON; `try/catch` (private mode can block storage); the browser `online` event; which errors are worth retrying (network, 429, 5xx) and which are not (400).
 - **Docs:** https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage · https://developer.mozilla.org/en-US/docs/Web/API/Window/online_event
-- **Code:** `public/js/storage.js:6`; queue in `public/js/api.js:53` (enqueue), `:63` (send or queue), `:76` (flush); retry triggers in `public/js/app.js:171` (online) and `:185` (app opens).
+- **Code:** `public/js/storage.js:6`; queue in `public/js/api.js:53` (enqueue), `:63` (send or queue), `:76` (flush); retry triggers in `public/js/app.js:170` (online) and `:184` (app opens).
 
 ### 1.7 Randomized quiz
 - **What it does:** 10 questions picked from a bank of 15 (all from my Air and Waste facts), in a new random order every time; the 4 answers are shuffled too. Shows right/wrong with the fact, final score, best score, and sends the score to the sheet.
 - **What I researched:** the Fisher–Yates shuffle (fair random order); building buttons with JavaScript.
 - **Docs:** https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
-- **Code:** shuffle `public/js/data.js:103`; `public/js/quiz.js:32` (start), `:69` (check answer), `:102` (finish + save + send).
+- **Code:** shuffle `public/js/data.js:93`; `public/js/quiz.js:32` (start), `:69` (check answer), `:102` (finish + save + send).
 
 ### 1.8 Timed drag-and-drop game
 - **What it does:** trash falls faster over 60 seconds; sort it into Plastic, Paper, Metal or Organic by **dragging** it, or **tapping** it then a bin (keys 1–4 also work). +10 right, −5 wrong. Pauses when the app goes to the background.
@@ -71,29 +71,29 @@ and exactly where it is in the code (file:line). The Git commit history shows th
 - **Docs:** https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame · https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events
 - **Code (`public/js/game.js`):**
   - game loop at line 145
-  - spawning items at 173
-  - scoring at 238
-  - bin hit test at 265
-  - drag at 278
-  - auto-pause at 344
+  - spawning items at 174
+  - scoring at 239
+  - bin hit test at 266
+  - drag at 279
+  - auto-pause at 345
 
 ### 1.9 Smooth screen transitions
 - **What it does:** inner screens slide in from the right and slide back on Back; tabs fade. Uses the browser History API, so the phone's Back button works too (needed for Android). Motion is reduced if the user turns it off in their settings.
 - **What I researched:** CSS `@keyframes` and `transform`; `history.pushState` and `popstate`; `prefers-reduced-motion`.
 - **Docs:** https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_animations · https://developer.mozilla.org/en-US/docs/Web/API/History_API · https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion
-- **Code:** `public/js/router.js:34` (show + animate), `:103` (pushState), `:118` (popstate); `public/css/styles.css:110` and `:116` (animations), `:483` (reduced motion).
+- **Code:** `public/js/router.js:34` (show + animate), `:103` (pushState), `:118` (popstate); `public/css/styles.css:133` and `:139` (animations), `:508` (reduced motion).
 
 ### 1.10 PWA (manifest + service worker)
 - **What it does:** the app can be installed on a phone's home screen and opens offline. The service worker saves the app files; app files are loaded network-first (always fresh online), fonts cache-first, API calls are never cached.
 - **What I researched:** the web app manifest; service worker install/activate/fetch events; caching strategies; maskable icons.
 - **Docs:** https://web.dev/learn/pwa/ · https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API · https://developer.mozilla.org/en-US/docs/Web/Manifest
-- **Code:** `public/manifest.webmanifest`, `public/sw.js:32` (install), `public/sw.js:44` (fetch), registration `public/js/app.js:174`, link `public/index.html:11`, icons in `public/icons/`.
+- **Code:** `public/manifest.webmanifest`, `public/sw.js:32` (install), `public/sw.js:44` (fetch), registration `public/js/app.js:173`, link `public/index.html:11`, icons in `public/icons/`.
 
 ### 1.11 iPhone 18 Pro screen + responsive layout
 - **What it does:** on a laptop it shows only the 402 × 874 screen (55px corners, Dynamic Island, live clock, signal, real battery level when allowed, home indicator), scaled to fit. On a real phone (under 500px) it fills the whole screen and respects the notch (safe areas).
 - **What I researched:** CSS `transform: scale`; media queries; `env(safe-area-inset-*)`; `100dvh`; the Battery Status API.
 - **Docs:** https://developer.mozilla.org/en-US/docs/Web/CSS/env · https://developer.mozilla.org/en-US/docs/Web/API/Battery_Status_API
-- **Code:** `public/css/styles.css:47` (screen), `:470` (real phone), `public/js/app.js:10` (scale to fit).
+- **Code:** `public/css/styles.css:58` (screen), `:498` (real phone), `public/js/app.js:10` (scale to fit).
 
 ### 1.12 Labels and accessibility
 - **What it does:** every screen has a clear `<h1>` title; every button has visible text and/or an `aria-label`; every image has `alt` text; icons are `aria-hidden`; the screen title gets focus when a screen opens (screen readers); live regions announce scores and toasts. A comment above every screen and button in `public/index.html` says what it is.
@@ -101,7 +101,7 @@ and exactly where it is in the code (file:line). The Git commit history shows th
 - **Checked:** an automatic check in the browser found **47 buttons, 0 without a label; 11 screens, 0 without a title; 0 images without alt; 0 inputs without a label**.
 
 ### 1.13 Automatic tests
-- **What it does:** `npm test` runs 14 tests. They cover the rules and all four API routes against a fake Apps Script that runs my **real** `Code.gs` and copies Google's 302 redirect: wrong secret, bad input, CORS, rate limit, formula nicknames and missing settings.
+- **What it does:** `npm test` runs 15 tests. They cover the rules and all four API routes against a fake Apps Script that runs my **real** `Code.gs` and copies Google's 302 redirect: wrong secret, bad input, CORS, rate limit, formula and non-English names, old nickname tabs, my hand-made tabs and missing settings.
 - **Docs:** https://nodejs.org/api/test.html
 - **Code:** `tests/api.test.js`, `dev/mock-apps-script.js`, `dev/server.js`.
 
