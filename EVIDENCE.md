@@ -169,3 +169,73 @@ Docs: https://cli.github.com/manual/gh_repo_create · https://vercel.com/docs/de
 | Google Sheet checked directly | exactly 6 new rows (2 quizzes, 2 games, 2 actions); none of the bad or blocked requests got in |
 
 **Bug found in live testing and fixed:** right after a write, the Home totals lagged up to 40 seconds because Vercel's CDN cached `/api/stats`. I shortened the cache to 5 seconds (commit "Fresher live totals…") and checked again: the totals matched the Sheet straight away.
+
+---
+
+## 5. Design improvements (version 2)
+
+After testing version 1, I made two big improvements.
+
+### 5.1 Real names on the leaderboard (first name + last name initial)
+- **Why:** classmates couldn't tell who "Eco Falcon 42" was. A first name plus one letter ("Mahmoud E.") is easy to recognise, but still doesn't give away a full name.
+- **What changed:**
+  - The Name screen asks for a first name (English letters A–Z only, 2–15 letters) and a last name initial (exactly 1 letter). They're saved in localStorage and can be edited from Home.
+  - Home and the leaderboard show names like "Mahmoud E.".
+  - The server checks the same rules again. `Code.gs` now has the columns `time | first name | initial | type | score` and `time | first name | initial | action`.
+  - Old tabs with the nickname columns are renamed "(old)" instead of deleted, so no data is lost.
+- **What I researched:** regular expressions for "letters only" (`/^[A-Za-z]+$/`); keeping app and server rules the same with one shared file; changing a database's columns without losing old data.
+- **Docs:** https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions · https://developers.google.com/apps-script/reference/spreadsheet/sheet#setName(String)
+- **Code:**
+  - Rules (`public/js/rules.js`): first name at line 79, initial at 91, whole name at 102, "Mahmoud E." at 112.
+  - App: `public/js/storage.js:61`, `public/js/app.js:69`, `public/index.html:123`.
+  - Server: `api/score.js:23`, `api/action.js:23`, `api/leaderboard.js:22`.
+  - Sheet (`google-apps-script/Code.gs`): columns at line 28, moving old tabs aside at 145, best score per person at 177, A–Z check at 218.
+- **Tests:** `tests/api.test.js:13` (name rules, including rejecting Arabic letters, spaces, numbers and bad words) and `:91` (old nickname tab kept as "Scores (old)"). 15/15 pass.
+
+### 5.2 Colours and style from my SDG 11.6 PowerPoint
+- **Why:** version 1 looked like a generic app template. Version 2 matches my presentation, so the app and the slides feel like one project.
+- **Colours:**
+  - Only the 13 colours from my PowerPoint are used anywhere. They're CSS variables in `:root`, with a comment saying where they come from (`public/css/styles.css:7–22`).
+  - Every other colour was replaced, including greens, reds, greys, black, gradients, see-through overlays and soft shadows.
+  - Checked with a search of all CSS, HTML and JS files: no colour outside the 13 is left.
+- **Style:**
+  - Flat colours only, with no gradients, glass blur, glows or soft shadows.
+  - Headings in UPPERCASE DM Sans, like "CAUSES OF POOR AIR QUALITY" (`styles.css:143`).
+  - Olive blob and dash shapes in the corners, like my slides (`styles.css:33`, `:108`).
+  - Simple flat icons in dark circles with a label next to them, like my Causes slide (`styles.css:175`, `index.html:290`).
+  - The PM2.5 chart copies my slide (`index.html:278`, `styles.css:296`):
+    - orange Cairo bars and a light-teal WHO bar
+    - values on top
+    - "Source: IQAir" underneath
+    - title "Cairo air pollution (PM2.5) is 8x the safe limit"
+  - Fewer animations: a simple slide between screens, nothing bouncy (`styles.css:132`).
+  - Mixed layouts instead of rows of identical cards: dark bands, uneven split rows and list rows (`styles.css:232`).
+  - All app text rewritten short and casual, like a teen talking to teens. My research facts are still word for word.
+  - The splash screen says "by Mahmoud Etman" at the bottom (`index.html:119`).
+- **What I researched:** CSS custom properties (variables); SVG shapes as CSS backgrounds; CSS Grid for uneven layouts.
+- **Docs:** https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties · https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_grid_layout
+
+### 5.3 Checks after the redesign
+- **Navigation:** clicking through every tab, every Home button, every Play card, every Back button and the browser Back button passed **28/28**.
+- **Labels:** **46 buttons, 0 without a label**; 0 images without alt text; 0 screens without a title; 0 inputs without a label. The comments above every screen and button are still there.
+- **Phone width (375px):** the app fills the screen with no frame and no sideways scrolling.
+- **Screenshots of every screen:**
+  - `01-splash.jpg`
+  - `02-name.jpg` (with an error showing)
+  - `03-home.jpg`
+  - `04-air.jpg`
+  - `05-air-chart-causes.jpg`
+  - `06-waste.jpg`
+  - `07-play.jpg`
+  - `08-quiz-question.jpg` (wrong answer + fact)
+  - `09-quiz-score.jpg`
+  - `10-game.jpg`
+  - `11-action.jpg`
+  - `12-leaderboard.jpg`
+  - `13-sources.jpg`
+
+  They're all in the [`screenshots/`](screenshots/) folder.
+- **Bugs found and fixed while testing:**
+  1. Items inside scrolling screens could shrink to 0 height (the "Cairo 40%" bar disappeared).
+  2. The tab bar flashed on the splash while the page loaded.
+  3. The olive blob was cut off by the status bar.
