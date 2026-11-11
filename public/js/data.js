@@ -63,12 +63,11 @@ var DATA = (function () {
 
   // ----- AQI levels (US AQI scale used by Open-Meteo) with a tip for the day -----
   var AQI_LEVELS = [
-    { max: 50, name: 'Good', color: '#4CAF50', tip: 'Clean air today. Walk or bike!' },
-    { max: 100, name: 'OK', color: '#F4D03F', tip: 'Take the metro today to keep the air clean.' },
-    { max: 150, name: 'Bad for some', color: '#F39C12', tip: 'Take the metro today. Asthma? Stay inside more.' },
-    { max: 200, name: 'Unhealthy', color: '#E74C3C', tip: 'Wear a mask outside and take the metro.' },
-    { max: 300, name: 'Very unhealthy', color: '#9B59B6', tip: 'Stay inside and close the windows.' },
-    { max: Infinity, name: 'Dangerous', color: '#7E2D3A', tip: 'Stay inside today. The air is dangerous.' }
+    { max: 50, name: 'Good', color: '#8FB8B0', tip: 'Clean air today. Walk or bike!' },
+    { max: 100, name: 'OK', color: '#E8A45A', tip: 'Take the metro today to keep the air clean.' },
+    { max: 150, name: 'Bad for some', color: '#CE7F01', tip: 'Take the metro today. Asthma? Stay inside more.' },
+    { max: 200, name: 'Unhealthy', color: '#D15A29', tip: 'Wear a mask outside and take the metro.' },
+    { max: Infinity, name: 'Very unhealthy', color: '#B495C2', tip: 'Stay inside today and close the windows.' }
   ];
 
   // ----- Works cited (from my presentation) + the live data API -----

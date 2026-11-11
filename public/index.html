@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Make Cairo Clean Again</title>
   <meta name="description" content="An SDG 11.6 app for teens in Cairo about air quality and waste. Made by Mahmoud Etman 9E.">
-  <meta name="theme-color" content="#1F4B4B">
+  <meta name="theme-color" content="#154C4A">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="manifest" href="manifest.webmanifest">
@@ -248,12 +248,11 @@
           <h2 class="card-title">What is AQI?</h2>
           <p>A score for the air. Low = clean. High = dirty.</p>
           <ul class="aqi-scale" aria-label="AQI colour scale">
-            <li><span class="dot" style="--c:#4CAF50"></span><b>0–50</b> Good</li>
-            <li><span class="dot" style="--c:#F4D03F"></span><b>51–100</b> OK</li>
-            <li><span class="dot" style="--c:#F39C12"></span><b>101–150</b> Bad for some</li>
-            <li><span class="dot" style="--c:#E74C3C"></span><b>151–200</b> Unhealthy</li>
-            <li><span class="dot" style="--c:#9B59B6"></span><b>201–300</b> Very unhealthy</li>
-            <li><span class="dot" style="--c:#7E2D3A"></span><b>301+</b> Dangerous</li>
+            <li><span class="dot" style="--c:var(--teal-light)"></span><b>0–50</b> Good</li>
+            <li><span class="dot" style="--c:var(--accent)"></span><b>51–100</b> OK</li>
+            <li><span class="dot" style="--c:var(--orange-dark)"></span><b>101–150</b> Bad for some</li>
+            <li><span class="dot" style="--c:var(--red)"></span><b>151–200</b> Unhealthy</li>
+            <li><span class="dot" style="--c:var(--purple)"></span><b>201+</b> Very unhealthy</li>
           </ul>
         </article>
 
@@ -262,9 +261,9 @@
           <h2 class="card-title">Cairo vs WHO</h2>
           <p class="fact strong">Cairo's 2025 average PM2.5 was about 40.8 µg/m³, around 8x the WHO limit of 5.</p>
           <div class="bar-chart" id="pmChart" role="img" aria-label="Bar chart of yearly average PM2.5 in micrograms per cubic metre: WHO safe limit 5, Cairo 2024 39.9, Cairo 2025 40.8">
-            <div class="bar-col"><span class="bar-val">5</span><span class="bar" style="--h:5;--c:#4CAF50"></span><span class="bar-label">WHO safe limit</span></div>
-            <div class="bar-col"><span class="bar-val">39.9</span><span class="bar" style="--h:39.9;--c:#E8A45A"></span><span class="bar-label">Cairo 2024</span></div>
-            <div class="bar-col"><span class="bar-val">40.8</span><span class="bar" style="--h:40.8;--c:#E74C3C"></span><span class="bar-label">Cairo 2025</span></div>
+            <div class="bar-col"><span class="bar-val">5</span><span class="bar" style="--h:5;--c:var(--teal-light)"></span><span class="bar-label">WHO safe limit</span></div>
+            <div class="bar-col"><span class="bar-val">39.9</span><span class="bar" style="--h:39.9;--c:var(--accent)"></span><span class="bar-label">Cairo 2024</span></div>
+            <div class="bar-col"><span class="bar-val">40.8</span><span class="bar" style="--h:40.8;--c:var(--accent)"></span><span class="bar-label">Cairo 2025</span></div>
           </div>
           <p class="chart-note">PM2.5 yearly average, µg/m³</p>
         </article>
@@ -308,8 +307,8 @@
           <h2 class="card-title">Where does it go?</h2>
           <p class="fact strong">Around 88% goes to open dumps and only about 7% reaches proper landfills.</p>
           <div class="hbars" role="img" aria-label="88 percent open dumps, 7 percent proper landfills">
-            <div class="hbar"><span class="hbar-label">Open dumps</span><span class="hbar-track"><span class="hbar-fill" style="--w:88%;--c:#E74C3C"></span></span><b>88%</b></div>
-            <div class="hbar"><span class="hbar-label">Landfills</span><span class="hbar-track"><span class="hbar-fill" style="--w:7%;--c:#4CAF50"></span></span><b>7%</b></div>
+            <div class="hbar"><span class="hbar-label">Open dumps</span><span class="hbar-track"><span class="hbar-fill" style="--w:88%;--c:var(--red)"></span></span><b>88%</b></div>
+            <div class="hbar"><span class="hbar-label">Landfills</span><span class="hbar-track"><span class="hbar-fill" style="--w:7%;--c:var(--teal-light)"></span></span><b>7%</b></div>
           </div>
         </article>
 
@@ -318,9 +317,9 @@
           <h2 class="card-title">Recycling is growing</h2>
           <p class="fact strong">Recycling went from 10% in 2018 to 37% in 2024. The goal is to have 60% by 2027.</p>
           <div class="hbars" role="img" aria-label="Recycling rate: 10 percent in 2018, 37 percent in 2024, goal of 60 percent by 2027">
-            <div class="hbar"><span class="hbar-label">2018</span><span class="hbar-track"><span class="hbar-fill" style="--w:10%;--c:#E8A45A"></span></span><b>10%</b></div>
-            <div class="hbar"><span class="hbar-label">2024</span><span class="hbar-track"><span class="hbar-fill" style="--w:37%;--c:#E8A45A"></span></span><b>37%</b></div>
-            <div class="hbar goal"><span class="hbar-label">2027 goal</span><span class="hbar-track"><span class="hbar-fill" style="--w:60%;--c:#F2EDE0"></span></span><b>60%</b></div>
+            <div class="hbar"><span class="hbar-label">2018</span><span class="hbar-track"><span class="hbar-fill" style="--w:10%;--c:var(--accent)"></span></span><b>10%</b></div>
+            <div class="hbar"><span class="hbar-label">2024</span><span class="hbar-track"><span class="hbar-fill" style="--w:37%;--c:var(--accent)"></span></span><b>37%</b></div>
+            <div class="hbar goal"><span class="hbar-label">2027 goal</span><span class="hbar-track"><span class="hbar-fill" style="--w:60%;--c:var(--cream)"></span></span><b>60%</b></div>
           </div>
         </article>
 
@@ -444,13 +443,13 @@
         <!-- BINS: the four bins at the bottom -->
         <div class="bins" id="bins">
           <!-- BUTTON: Plastic bin -->
-          <button class="bin" type="button" data-bin="plastic" style="--bin:#F2C94C" aria-label="Plastic bin"><svg aria-hidden="true"><use href="#t-bin"/></svg><span>Plastic</span></button>
+          <button class="bin" type="button" data-bin="plastic" style="--bin:var(--accent)" aria-label="Plastic bin"><svg aria-hidden="true"><use href="#t-bin"/></svg><span>Plastic</span></button>
           <!-- BUTTON: Paper bin -->
-          <button class="bin" type="button" data-bin="paper" style="--bin:#6FA8DC" aria-label="Paper bin"><svg aria-hidden="true"><use href="#t-bin"/></svg><span>Paper</span></button>
+          <button class="bin" type="button" data-bin="paper" style="--bin:var(--cream)" aria-label="Paper bin"><svg aria-hidden="true"><use href="#t-bin"/></svg><span>Paper</span></button>
           <!-- BUTTON: Metal bin -->
-          <button class="bin" type="button" data-bin="metal" style="--bin:#B8C2C6" aria-label="Metal bin"><svg aria-hidden="true"><use href="#t-bin"/></svg><span>Metal</span></button>
+          <button class="bin" type="button" data-bin="metal" style="--bin:var(--muted)" aria-label="Metal bin"><svg aria-hidden="true"><use href="#t-bin"/></svg><span>Metal</span></button>
           <!-- BUTTON: Organic bin -->
-          <button class="bin" type="button" data-bin="organic" style="--bin:#7CC27A" aria-label="Organic bin"><svg aria-hidden="true"><use href="#t-bin"/></svg><span>Organic</span></button>
+          <button class="bin" type="button" data-bin="organic" style="--bin:var(--olive);--bin-ink:var(--text)" aria-label="Organic bin"><svg aria-hidden="true"><use href="#t-bin"/></svg><span>Organic</span></button>
         </div>
         <!-- OVERLAY: start / pause / game over messages -->
         <div class="game-overlay" id="gameOverlay">
