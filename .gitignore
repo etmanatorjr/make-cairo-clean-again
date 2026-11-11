@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# Secrets — NEVER commit the sheet URL or secret
+.env
+.env.*
+!.env.example
+
+# Vercel
+.vercel/
+
+# Android / Capacitor build files (for the APK later)
+android/
+ios/
+*.apk
+*.aab
+*.keystore
+*.jks
+.gradle/
+build/
+local.properties
+
+# System / editor
+.DS_Store
+*.log
+.idea/
+.vscode/
+
+# Claude Code local settings
+.claude/

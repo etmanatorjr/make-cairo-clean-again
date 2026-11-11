@@ -1,0 +1,74 @@
+/* ==========================================================================
+   leaderboard.js — top 10 quiz and top 10 game scores from the Google Sheet
+   (through GET /api/leaderboard). My own row is highlighted.
+   ========================================================================== */
+var Leaderboard = (function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var CACHE_KEY = 'lbCache';
+  var view = 'quiz';                    // which list is showing: quiz | game
+  var data = Store.get(CACHE_KEY, null);
+
+  function isMe(name) {
+    var me = Store.nickname();
+    return me && String(name).toLowerCase() === me.toLowerCase();
+  }
+
+  function render() {
+    var list = $('lbList');
+    list.innerHTML = '';
+    if (!data) return;
+    var rows = data[view] || [];
+    if (!rows.length) {
+      list.innerHTML = '<li class="lb-empty">No scores yet. Be the first!</li>';
+    }
+    rows.forEach(function (row, i) {
+      var li = document.createElement('li');
+      li.className = 'lb-row' + (isMe(row.nickname) ? ' is-me' : '');
+      li.innerHTML = '<span class="lb-rank"></span><span class="lb-name"></span><span class="lb-score"></span>';
+      li.children[0].textContent = i + 1;
+      li.children[1].textContent = row.nickname + (isMe(row.nickname) ? ' (you)' : '');
+      li.children[2].textContent = view === 'quiz' ? row.score + '/10' : row.score;
+      li.setAttribute('aria-label', 'Rank ' + (i + 1) + ', ' + row.nickname + ', score ' + row.score);
+      list.appendChild(li);
+    });
+
+    var rank = data.myRank ? data.myRank[view] : null;
+    $('lbMe').textContent = !Store.nickname() ? '' :
+      rank ? 'Your rank: #' + rank : 'Play to get on the board!';
+  }
+
+  /** Switch between the Quiz and Game lists. */
+  function setView(next) {
+    view = next;
+    ['quiz', 'game'].forEach(function (v) {
+      var tab = $(v === 'quiz' ? 'lbTabQuiz' : 'lbTabGame');
+      tab.classList.toggle('is-active', v === next);
+      tab.setAttribute('aria-selected', v === next ? 'true' : 'false');
+    });
+    render();
+  }
+
+  /** Load the newest scores from the server. */
+  function load() {
+    $('lbStatus').textContent = 'Loading…';
+    render();
+    return Api.flushQueue().then(function () { return Api.leaderboard(); }).then(function (r) {
+      if (!r.ok) throw new Error(r.data && r.data.error || 'HTTP ' + r.status);
+      data = { quiz: r.data.quiz || [], game: r.data.game || [], myRank: r.data.myRank || {} };
+      Store.set(CACHE_KEY, data);
+      $('lbStatus').textContent = 'Live from the Google Sheet';
+      render();
+    }).catch(function () {
+      $('lbStatus').textContent = data ? 'Offline: showing saved scores' : "Can't load. Check your internet.";
+      render();
+    });
+  }
+
+  // BUTTON handlers: the two tabs and refresh
+  $('lbTabQuiz').addEventListener('click', function () { setView('quiz'); });
+  $('lbTabGame').addEventListener('click', function () { setView('game'); });
+  $('btnLbRefresh').addEventListener('click', load);
+
+  return { load: load };
+})();

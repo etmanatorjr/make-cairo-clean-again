@@ -1,0 +1,130 @@
+/* ==========================================================================
+   api.js — talks to my Vercel serverless API (/api/...).
+   The Google Sheet URL and secret are NEVER in the app; only the server knows them.
+
+   Offline retry: if sending a score or action fails (no internet, server down),
+   it is kept in localStorage ("queue") and sent the next time the app opens
+   or when the internet comes back.
+   ========================================================================== */
+var Api = (function () {
+  'use strict';
+  var cfg = window.APP_CONFIG;
+  var QUEUE_KEY = 'queue';
+  var flushing = false;
+
+  /** Use the local server when testing on my computer, else the full Vercel URL. */
+  function base() {
+    if (cfg.LOCAL_DEV_HOSTS.indexOf(location.host) !== -1) return '';
+    return cfg.API_BASE;
+  }
+
+  /** fetch() with a time limit so the app never hangs. */
+  function request(path, options) {
+    var ctrl = new AbortController();
+    var timer = setTimeout(function () { ctrl.abort(); }, 12000);
+    // cache: 'no-cache' = always ask the server for fresh scores
+    var opts = Object.assign({ signal: ctrl.signal, cache: 'no-cache' }, options || {});
+    return fetch(base() + path, opts)
+      .then(function (res) {
+        return res.json().catch(function () { return {}; }).then(function (data) {
+          return { status: res.status, ok: res.ok, data: data };
+        });
+      })
+      .finally(function () { clearTimeout(timer); });
+  }
+
+  function post(path, body) {
+    return request(path, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+  }
+
+  /** Should this failed request be tried again later? (network error, rate limit, server error) */
+  function isRetryable(result) {
+    return !result || result.status === 0 || result.status === 429 || result.status >= 500;
+  }
+
+  // ----- the offline queue -----
+  function queue() { return Store.get(QUEUE_KEY, []); }
+  function saveQueue(q) { Store.set(QUEUE_KEY, q.slice(-50)); } // keep max 50 waiting items
+
+  function enqueue(path, body) {
+    var q = queue();
+    q.push({ path: path, body: body, at: Date.now() });
+    saveQueue(q);
+  }
+
+  /**
+   * Send a score or action. If it fails, keep it for later.
+   * Resolves to "sent", "queued" or "rejected".
+   */
+  function send(path, body) {
+    return post(path, body).then(function (r) {
+      if (r.ok) return 'sent';
+      if (isRetryable(r)) { enqueue(path, body); return 'queued'; }
+      console.warn('Server rejected', path, r.data);
+      return 'rejected';
+    }).catch(function () {
+      enqueue(path, body);
+      return 'queued';
+    });
+  }
+
+  /** Try to send everything that is waiting. Resolves to how many were sent. */
+  function flushQueue() {
+    if (flushing) return Promise.resolve(0);
+    var q = queue();
+    if (!q.length) return Promise.resolve(0);
+    flushing = true;
+    var sent = 0;
+    var i = 0;
+
+    function next() {
+      if (i >= q.length) return Promise.resolve();
+      var item = q[i];
+      return post(item.path, item.body).then(function (r) {
+        if (r.ok) { sent++; i++; return next(); }
+        if (isRetryable(r)) return; // stop, try again later
+        i++; // bad data — drop it and keep going
+        return next();
+      }).catch(function () { /* still offline: stop */ });
+    }
+
+    return next().then(function () {
+      // remove what was handled; keep the rest (and anything added meanwhile)
+      var now = queue();
+      saveQueue(now.slice(i));
+      flushing = false;
+      return sent;
+    });
+  }
+
+  return {
+    base: base,
+    pendingCount: function () { return queue().length; },
+    flushQueue: flushQueue,
+
+    /** POST /api/score { nickname, type, score } */
+    sendScore: function (type, score) {
+      return send('/api/score', { nickname: Store.nickname(), type: type, score: score });
+    },
+
+    /** POST /api/action { nickname, action } */
+    sendAction: function (action) {
+      return send('/api/action', { nickname: Store.nickname(), action: action });
+    },
+
+    /** GET /api/leaderboard (with my nickname so the server can tell me my rank) */
+    leaderboard: function () {
+      var nick = Store.nickname();
+      return request('/api/leaderboard' + (nick ? '?nickname=' + encodeURIComponent(nick) : ''));
+    },
+
+    /** GET /api/stats — the "everyone together" totals */
+    stats: function () {
+      return request('/api/stats');
+    }
+  };
+})();
