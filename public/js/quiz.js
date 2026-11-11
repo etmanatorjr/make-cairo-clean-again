@@ -81,7 +81,7 @@ var Quiz = (function () {
     var fb = $('quizFeedback');
     fb.className = 'feedback ' + (right ? 'right' : 'wrong');
     $('quizFeedbackTitle').innerHTML = '<svg aria-hidden="true"><use href="#' + (right ? 'i-check' : 'i-x') + '"/></svg><span></span>';
-    $('quizFeedbackTitle').lastChild.textContent = right ? 'Right!' : 'Not quite. It is: ' + item.a;
+    $('quizFeedbackTitle').lastChild.textContent = right ? 'Yep!' : "Nope. It's " + item.a;
     $('quizFeedbackFact').textContent = item.fact;
     fb.hidden = false;
     $('quizScoreLive').textContent = score;
@@ -104,19 +104,19 @@ var Quiz = (function () {
     $('quizProgressFill').style.width = '100%';
     $('quizFinal').textContent = score;
     $('quizEndMsg').textContent =
-      score === 10 ? 'Perfect! You are a Cairo air and waste expert.' :
-      score >= 7 ? 'Great job! You know a lot.' :
-      score >= 4 ? 'Good try! Read the Air and Waste tabs and try again.' :
-      'Keep learning! Check the Air and Waste tabs.';
-    $('quizEndBest').textContent = isBest ? 'New best score!' : 'Best: ' + bestText();
-    $('quizSync').textContent = 'Saving your score…';
+      score === 10 ? 'Perfect score. Respect.' :
+      score >= 7 ? 'Nice! You know your stuff.' :
+      score >= 4 ? 'Not bad. Check Air and Waste, then go again.' :
+      'Read Air and Waste, then try again.';
+    $('quizEndBest').textContent = isBest ? 'New best!' : 'Your best: ' + bestText();
+    $('quizSync').textContent = 'Saving…';
     showPart('quizEnd');
 
     Api.sendScore('quiz', score).then(function (result) {
       $('quizSync').textContent =
-        result === 'sent' ? 'Score saved to the leaderboard.' :
-        result === 'queued' ? 'Offline. Your score will be sent later.' :
-        'Could not save this score.';
+        result === 'sent' ? 'Saved to the leaderboard.' :
+        result === 'queued' ? "No internet. It'll send later." :
+        "Couldn't save this one.";
     });
   }
 

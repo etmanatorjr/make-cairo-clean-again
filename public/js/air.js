@@ -39,15 +39,17 @@ var Air = (function () {
     var t = new Date(result.fetchedAt);
     $('aqiTime').textContent = (note ? note + ' · ' : 'Live · ') + 'updated ' +
       t.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) + ' · Open-Meteo';
-    $('homeAqi').textContent = 'AQI ' + aqi + ' · ' + level.name;
+    $('homeAqi').textContent = 'AQI ' + aqi;
+    $('homeAqi').style.background = level.color;
   }
 
   function renderError() {
     $('aqiNum').textContent = '--';
-    $('aqiLevel').textContent = 'No live data';
+    $('aqiLevel').textContent = 'No data';
     $('aqiPm').textContent = 'Check your internet';
-    $('aqiTip').textContent = 'Take the metro and never burn trash.';
+    $('aqiTip').textContent = "Take the metro and don't burn trash.";
     $('aqiTime').textContent = 'Tap refresh to try again';
+    $('homeAqi').textContent = 'AQI --';
   }
 
   /** Load the live AQI (uses the saved one if it is fresh, unless force = true). */

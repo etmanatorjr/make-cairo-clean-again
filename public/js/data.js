@@ -56,18 +56,18 @@ var DATA = (function () {
 
   // ----- Take Action: the 3 real actions -----
   var ACTIONS = [
-    { id: 'recycle', name: 'Recycle', desc: 'Sort plastic, paper and metal. Give them to collectors.', icon: 'i-recycle' },
-    { id: 'metro', name: 'Take the metro', desc: 'Metro or bus, not a car. Less smoke in the air.', icon: 'i-train' },
-    { id: 'noburn', name: "Don't burn trash", desc: 'Burning waste makes PM2.5. Bag it instead.', icon: 'i-noburn' }
+    { id: 'recycle', name: 'Recycle', desc: 'Sort plastic, paper and metal. Give it to the collectors.', icon: 'i-recycle' },
+    { id: 'metro', name: 'Take the metro', desc: 'Metro or bus, not a car. Less smoke.', icon: 'i-train' },
+    { id: 'noburn', name: "Don't burn trash", desc: 'Burning trash makes PM2.5. Bag it.', icon: 'i-noburn' }
   ];
 
   // ----- AQI levels (US AQI scale used by Open-Meteo) with a tip for the day -----
   var AQI_LEVELS = [
-    { max: 50, name: 'Good', color: '#8FB8B0', tip: 'Clean air today. Walk or bike!' },
-    { max: 100, name: 'OK', color: '#E8A45A', tip: 'Take the metro today to keep the air clean.' },
-    { max: 150, name: 'Bad for some', color: '#CE7F01', tip: 'Take the metro today. Asthma? Stay inside more.' },
-    { max: 200, name: 'Unhealthy', color: '#D15A29', tip: 'Wear a mask outside and take the metro.' },
-    { max: Infinity, name: 'Very unhealthy', color: '#B495C2', tip: 'Stay inside today and close the windows.' }
+    { max: 50, name: 'Good', color: '#8FB8B0', tip: "Air's clean. Walk or bike!" },
+    { max: 100, name: 'OK', color: '#E8A45A', tip: "Air's OK. Take the metro to keep it that way." },
+    { max: 150, name: 'Bad for some', color: '#CE7F01', tip: 'Take the metro. Got asthma? Stay inside more.' },
+    { max: 200, name: 'Unhealthy', color: '#D15A29', tip: 'Mask on outside. Take the metro.' },
+    { max: Infinity, name: 'Very unhealthy', color: '#B495C2', tip: 'Stay inside and close the windows.' }
   ];
 
   // ----- Works cited (from my presentation) + the live data API -----

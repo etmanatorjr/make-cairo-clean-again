@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Make Cairo Clean Again</title>
-  <meta name="description" content="An SDG 11.6 app for teens in Cairo about air quality and waste. Made by Mahmoud Etman 9E.">
+  <meta name="description" content="An SDG 11.6 app for teens in Cairo about air quality and waste. By Mahmoud Etman.">
   <meta name="theme-color" content="#154C4A">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -20,7 +20,7 @@
 <body>
 
 <!-- ======================================================================
-     ICON SPRITE: every simple SVG icon used in the app (no emoji).
+     ICON SPRITE: every simple flat icon used in the app (no emoji, no icon library).
      Use one with <svg><use href="#i-home"/></svg>
      ====================================================================== -->
 <svg xmlns="http://www.w3.org/2000/svg" class="sprite" aria-hidden="true" focusable="false">
@@ -34,6 +34,7 @@
     <symbol id="i-game" viewBox="0 0 24 24"><path d="M6.5 7h11a4.5 4.5 0 0 1 4.4 5.4l-.6 3a3 3 0 0 1-5.2 1.4L14.5 15h-5l-1.6 1.8a3 3 0 0 1-5.2-1.4l-.6-3A4.5 4.5 0 0 1 6.5 7z"/><path d="M8 10v3M6.5 11.5h3"/><path d="M15.5 11h.01M17.5 12.5h.01"/></symbol>
     <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 21h8M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 6h3v1.5a3.5 3.5 0 0 1-3.5 3.5M7 6H4v1.5A3.5 3.5 0 0 0 7.5 11"/></symbol>
     <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19V5a2 2 0 0 1 2-2h14v16H6a2 2 0 0 0-2 2 2 2 0 0 0 2 2h14v-4"/><path d="M8 7h8M8 11h6"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
     <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
     <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M4 20l4-1L19 8l-3-3L5 16z"/><path d="M14 7l3 3"/></symbol>
     <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.4-5.7"/><path d="M20 4v5h-5"/></symbol>
@@ -80,7 +81,7 @@
      ====================================================================== -->
 <div class="device" id="device">
 
-  <!-- DYNAMIC ISLAND: black cut-out at the top of the screen (decoration) -->
+  <!-- DYNAMIC ISLAND: cut-out at the top of the screen (decoration) -->
   <div class="island" aria-hidden="true"></div>
 
   <!-- STATUS BAR: live time, signal, wifi and battery (decoration) -->
@@ -91,13 +92,14 @@
       <svg class="sb-signal" viewBox="0 0 18 12" width="18" height="12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
       <!-- wifi -->
       <svg class="sb-wifi" viewBox="0 0 16 12" width="16" height="12"><path d="M8 11.5 5.6 9a3.4 3.4 0 0 1 4.8 0z"/><path d="M3.4 6.8a6.6 6.6 0 0 1 9.2 0l-1.2 1.3a4.9 4.9 0 0 0-6.8 0z"/><path d="M1.2 4.6a9.7 9.7 0 0 1 13.6 0l-1.2 1.2a8 8 0 0 0-11.2 0z"/></svg>
-      <!-- battery: the green/cream fill width shows the real battery level when the browser allows it -->
+      <!-- battery: the fill width shows the real battery level when the browser allows it -->
       <span class="sb-battery"><span class="sb-battery-fill" id="sbBattery"></span></span>
     </span>
   </div>
 
   <!-- ====================================================================
        SCREENS: only one is visible at a time. js/router.js switches them.
+       Olive blob + dash shapes in the corners come from styles.css (like my slides).
        ==================================================================== -->
   <main class="screens" id="screens">
 
@@ -107,27 +109,27 @@
     <section class="screen screen-splash" id="screen-splash" data-title="Welcome" aria-labelledby="title-splash" hidden>
       <div class="splash">
         <!-- IMAGE: App logo (SDG 11 style city icon) -->
-        <img class="splash-logo" src="icons/icon.svg" width="128" height="128" alt="Make Cairo Clean Again logo: an orange square with a city skyline and a leaf">
+        <img class="splash-logo" src="icons/icon.svg" width="112" height="112" alt="Make Cairo Clean Again logo: an orange square with a city skyline and a leaf">
         <p class="eyebrow">SDG 11.6 · Cairo</p>
         <h1 class="splash-title" id="title-splash" tabindex="-1">Make Cairo<br>Clean Again</h1>
-        <p class="splash-sub">Cleaner air. Less waste.<br>A better city for us.</p>
+        <p class="splash-sub">Cleaner air. Less trash.<br>It's our city.</p>
         <!-- BUTTON: Start — goes to Name (first time) or Home -->
         <button class="btn btn-primary btn-big" id="btnStart" type="button" aria-label="Start the app">Start</button>
-        <p class="credit">Made by Mahmoud Etman 9E</p>
       </div>
+      <p class="splash-by">by Mahmoud Etman</p>
     </section>
 
     <!-- ================================================================
          SCREEN: NAME — first name + last name initial (inner screen)
          ================================================================ -->
-    <section class="screen" id="screen-name" data-title="Your name" aria-labelledby="title-name" hidden>
+    <section class="screen deco-dashes" id="screen-name" data-title="Your name" aria-labelledby="title-name" hidden>
       <header class="screen-header">
         <!-- BUTTON: Back -->
         <button class="back-btn" type="button" data-back aria-label="Go back"><svg aria-hidden="true"><use href="#i-back"/></svg><span>Back</span></button>
-        <h1 class="screen-title" id="title-name" tabindex="-1">Your name</h1>
+        <h1 class="screen-title" id="title-name" tabindex="-1">Who's playing?</h1>
       </header>
       <div class="screen-body">
-        <p class="lead">This is how you show up on the leaderboard, like "Mahmoud E."</p>
+        <p class="lead">First name + last initial. That's what shows on the leaderboard, like "Mahmoud E."</p>
         <form id="nameForm" class="name-form" novalidate>
           <!-- FIELD: First name -->
           <label class="field-label" for="firstNameInput">First name</label>
@@ -139,9 +141,13 @@
           <p class="field-error" id="firstNameError" role="alert"></p>
 
           <!-- FIELD: Last name initial (1 letter) -->
-          <label class="field-label" for="initialInput">Last name initial</label>
-          <input class="field-input field-initial" id="initialInput" name="initial" type="text" maxlength="1" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="E" aria-describedby="initialHint initialError">
-          <p class="field-hint" id="initialHint">Just 1 letter.</p>
+          <div class="initial-row">
+            <div>
+              <label class="field-label" for="initialInput">Last name initial</label>
+              <p class="field-hint" id="initialHint">Just 1 letter.</p>
+            </div>
+            <input class="field-input field-initial" id="initialInput" name="initial" type="text" maxlength="1" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="E" aria-describedby="initialHint initialError">
+          </div>
           <p class="field-error" id="initialError" role="alert"></p>
 
           <!-- BUTTON: Save name -->
@@ -151,69 +157,82 @@
     </section>
 
     <!-- ================================================================
-         SCREEN: HOME — hello, live totals and big buttons (tab)
+         SCREEN: HOME — hey + name, live totals and buttons (tab)
          ================================================================ -->
     <section class="screen" id="screen-home" data-title="Home" data-tab="home" aria-labelledby="title-home" hidden>
       <header class="screen-header home-header">
         <div>
-          <p class="eyebrow">Hello,</p>
+          <p class="eyebrow">Hey,</p>
           <h1 class="screen-title" id="title-home" tabindex="-1"><span id="homeName">friend</span></h1>
         </div>
         <!-- BUTTON: Change my name -->
         <button class="icon-btn" id="btnEditName" type="button" aria-label="Change my name"><svg aria-hidden="true"><use href="#i-pencil"/></svg></button>
       </header>
       <div class="screen-body">
-        <!-- CARD: Everyone together — live totals from the Google Sheet -->
-        <div class="together" aria-live="polite">
-          <p class="eyebrow">Everyone together</p>
-          <p class="together-big">Cairo teens took <strong id="statActions">…</strong> actions</p>
-          <p class="together-sub"><span id="statQuizzes">…</span> quizzes · <span id="statGames">…</span> games played</p>
+        <!-- BAND: Everyone together — live totals from the Google Sheet -->
+        <div class="band together" aria-live="polite">
+          <p class="together-num" id="statActions">…</p>
+          <p class="together-text">actions by Cairo teens so far<br><span><span id="statQuizzes">…</span> quizzes · <span id="statGames">…</span> games</span></p>
         </div>
 
-        <div class="home-grid">
-          <!-- BUTTON: Air — opens the Air tab -->
-          <button class="tile" type="button" data-go="air" aria-label="Air: learn about air quality and see live AQI">
-            <svg aria-hidden="true"><use href="#i-air"/></svg>
-            <span class="tile-label">Air</span><span class="tile-sub" id="homeAqi">Live AQI</span>
-          </button>
-          <!-- BUTTON: Waste — opens the Waste tab -->
-          <button class="tile" type="button" data-go="waste" aria-label="Waste: learn about city waste">
-            <svg aria-hidden="true"><use href="#i-waste"/></svg>
+        <!-- BUTTON: Air — big card with the live AQI -->
+        <button class="tile tile-air" type="button" data-go="air" aria-label="Air: live air quality in Cairo">
+          <span class="circle"><svg aria-hidden="true"><use href="#i-air"/></svg></span>
+          <span class="tile-text"><span class="tile-label">Air</span><span class="tile-sub">How bad is it today?</span></span>
+          <span class="tile-aqi" id="homeAqi">AQI …</span>
+        </button>
+
+        <div class="row-split">
+          <!-- BUTTON: Waste -->
+          <button class="tile" type="button" data-go="waste" aria-label="Waste: where Cairo's trash goes">
+            <span class="circle"><svg aria-hidden="true"><use href="#i-waste"/></svg></span>
             <span class="tile-label">Waste</span><span class="tile-sub">Where it goes</span>
           </button>
-          <!-- BUTTON: Quiz — opens the Quiz screen -->
-          <button class="tile" type="button" data-go="quiz" aria-label="Quiz: 10 questions">
-            <svg aria-hidden="true"><use href="#i-quiz"/></svg>
-            <span class="tile-label">Quiz</span><span class="tile-sub">10 questions</span>
-          </button>
-          <!-- BUTTON: Game — opens the trash sorting game -->
-          <button class="tile" type="button" data-go="game" aria-label="Game: sort the trash">
-            <svg aria-hidden="true"><use href="#i-game"/></svg>
-            <span class="tile-label">Game</span><span class="tile-sub">Sort the trash</span>
-          </button>
-          <!-- BUTTON: Take Action — opens the Action tab -->
-          <button class="tile tile-wide" type="button" data-go="action" aria-label="Take Action: tick off today's actions">
-            <svg aria-hidden="true"><use href="#i-action"/></svg>
-            <span><span class="tile-label">Take Action</span><span class="tile-sub" id="homeStreak">Start your streak</span></span>
-          </button>
-          <!-- BUTTON: Leaderboard — opens the Leaderboard screen -->
-          <button class="tile" type="button" data-go="leaderboard" aria-label="Leaderboard: top scores">
-            <svg aria-hidden="true"><use href="#i-trophy"/></svg>
-            <span class="tile-label">Leaderboard</span><span class="tile-sub">Top 10</span>
-          </button>
-          <!-- BUTTON: Sources — opens the Sources screen -->
-          <button class="tile" type="button" data-go="sources" aria-label="Sources: where the facts come from">
-            <svg aria-hidden="true"><use href="#i-book"/></svg>
-            <span class="tile-label">Sources</span><span class="tile-sub">Works cited</span>
+          <!-- BUTTON: Quiz -->
+          <button class="tile tile-cream" type="button" data-go="quiz" aria-label="Quiz: 10 questions">
+            <span class="circle"><svg aria-hidden="true"><use href="#i-quiz"/></svg></span>
+            <span class="tile-label">Quiz</span><span class="tile-sub">10 Qs</span>
           </button>
         </div>
+
+        <div class="row-split flip">
+          <!-- BUTTON: Game -->
+          <button class="tile" type="button" data-go="game" aria-label="Game: sort the trash">
+            <span class="circle"><svg aria-hidden="true"><use href="#i-game"/></svg></span>
+            <span class="tile-label">Game</span><span class="tile-sub">Sort the trash</span>
+          </button>
+          <!-- BUTTON: Take Action -->
+          <button class="tile tile-orange" type="button" data-go="action" aria-label="Take Action: tick off what you did today">
+            <span class="circle"><svg aria-hidden="true"><use href="#i-action"/></svg></span>
+            <span class="tile-label">Take Action</span><span class="tile-sub" id="homeStreak">Start a streak</span>
+          </button>
+        </div>
+
+        <ul class="link-list">
+          <li>
+            <!-- BUTTON: Leaderboard -->
+            <button class="link-row" type="button" data-go="leaderboard" aria-label="Leaderboard: who's on top">
+              <span class="circle small"><svg aria-hidden="true"><use href="#i-trophy"/></svg></span>
+              <span class="link-text">Leaderboard<small>Who's on top</small></span>
+              <svg class="chev" aria-hidden="true"><use href="#i-chevron"/></svg>
+            </button>
+          </li>
+          <li>
+            <!-- BUTTON: Sources -->
+            <button class="link-row" type="button" data-go="sources" aria-label="Sources: where the facts come from">
+              <span class="circle small"><svg aria-hidden="true"><use href="#i-book"/></svg></span>
+              <span class="link-text">Sources<small>Where the facts come from</small></span>
+              <svg class="chev" aria-hidden="true"><use href="#i-chevron"/></svg>
+            </button>
+          </li>
+        </ul>
       </div>
     </section>
 
     <!-- ================================================================
-         SCREEN: AIR — PM2.5, AQI, live Cairo air, chart and causes (tab)
+         SCREEN: AIR — live AQI, PM2.5, AQI scale, chart, causes (tab)
          ================================================================ -->
-    <section class="screen" id="screen-air" data-title="Air" data-tab="air" aria-labelledby="title-air" hidden>
+    <section class="screen deco-left" id="screen-air" data-title="Air" data-tab="air" aria-labelledby="title-air" hidden>
       <header class="screen-header">
         <h1 class="screen-title" id="title-air" tabindex="-1">Air</h1>
       </header>
@@ -221,7 +240,7 @@
         <!-- CARD: Live Cairo AQI from the Open-Meteo Air Quality API -->
         <article class="aqi-card" id="aqiCard" aria-live="polite" aria-labelledby="aqiCardTitle">
           <div class="aqi-top">
-            <h2 class="eyebrow" id="aqiCardTitle">Cairo air right now</h2>
+            <h2 class="eyebrow" id="aqiCardTitle">Cairo right now</h2>
             <!-- BUTTON: Refresh live AQI -->
             <button class="icon-btn small" id="btnAqiRefresh" type="button" aria-label="Refresh live air quality"><svg aria-hidden="true"><use href="#i-refresh"/></svg></button>
           </div>
@@ -232,89 +251,89 @@
               <p class="aqi-pm" id="aqiPm">PM2.5 -- µg/m³</p>
             </div>
           </div>
-          <p class="aqi-tip"><svg aria-hidden="true"><use href="#i-bulb"/></svg><span id="aqiTip">Getting today's tip…</span></p>
+          <p class="aqi-tip"><span class="circle small"><svg aria-hidden="true"><use href="#i-bulb"/></svg></span><span id="aqiTip">Getting today's tip…</span></p>
           <p class="aqi-time" id="aqiTime">Live data: Open-Meteo</p>
         </article>
 
-        <!-- CARD: What is PM2.5? -->
-        <article class="card">
-          <h2 class="card-title">What is PM2.5?</h2>
-          <p>Tiny bits of smoke and dust in the air. Much thinner than a hair.</p>
-          <p class="fact"><svg aria-hidden="true"><use href="#i-heart"/></svg><span>PM2.5 gets deep into the lungs and blood, causing heart and lung disease.</span></p>
-        </article>
+        <!-- SECTION: What is PM2.5? (plain text, no card) -->
+        <section class="plain">
+          <h2 class="section-title">What's PM2.5?</h2>
+          <p>Super tiny bits of smoke and dust. Way thinner than a hair, so you breathe them in without noticing.</p>
+          <p class="fact-line"><span class="circle small red"><svg aria-hidden="true"><use href="#i-heart"/></svg></span><span>PM2.5 gets deep into the lungs and blood, causing heart and lung disease.</span></p>
+        </section>
 
-        <!-- CARD: What is AQI? with colour scale -->
-        <article class="card">
-          <h2 class="card-title">What is AQI?</h2>
-          <p>A score for the air. Low = clean. High = dirty.</p>
-          <ul class="aqi-scale" aria-label="AQI colour scale">
-            <li><span class="dot" style="--c:var(--teal-light)"></span><b>0–50</b> Good</li>
-            <li><span class="dot" style="--c:var(--accent)"></span><b>51–100</b> OK</li>
-            <li><span class="dot" style="--c:var(--orange-dark)"></span><b>101–150</b> Bad for some</li>
-            <li><span class="dot" style="--c:var(--red)"></span><b>151–200</b> Unhealthy</li>
-            <li><span class="dot" style="--c:var(--purple)"></span><b>201+</b> Very unhealthy</li>
-          </ul>
-        </article>
+        <!-- SECTION: What is AQI? with the colour strip -->
+        <section class="plain">
+          <h2 class="section-title">What's AQI?</h2>
+          <p>A score for the air. Low is good, high is bad.</p>
+          <ol class="aqi-strip" aria-label="AQI colours: 0 to 50 good, 51 to 100 OK, 101 to 150 bad for some, 151 to 200 unhealthy, 201 and up very unhealthy">
+            <li style="--c:var(--teal-light)"><b>0–50</b>Good</li>
+            <li style="--c:var(--accent)"><b>51–100</b>OK</li>
+            <li style="--c:var(--orange-dark)"><b>101–150</b>Bad for some</li>
+            <li style="--c:var(--red)"><b>151–200</b>Unhealthy</li>
+            <li style="--c:var(--purple)"><b>201+</b>Very bad</li>
+          </ol>
+        </section>
 
-        <!-- CHART: PM2.5 bar chart — WHO limit vs Cairo 2024 and 2025 -->
-        <article class="card">
-          <h2 class="card-title">Cairo vs WHO</h2>
-          <p class="fact strong">Cairo's 2025 average PM2.5 was about 40.8 µg/m³, around 8x the WHO limit of 5.</p>
-          <div class="bar-chart" id="pmChart" role="img" aria-label="Bar chart of yearly average PM2.5 in micrograms per cubic metre: WHO safe limit 5, Cairo 2024 39.9, Cairo 2025 40.8">
+        <!-- CHART: PM2.5 bar chart like my slide (WHO limit vs Cairo 2024 and 2025) -->
+        <article class="card chart-card">
+          <h2 class="section-title">Cairo air pollution (PM2.5) is 8x the safe limit</h2>
+          <div class="bar-chart" id="pmChart" role="img" aria-label="Bar chart of yearly average PM2.5 in micrograms per cubic metre: WHO safe limit 5, Cairo 2024 39.9, Cairo 2025 40.8. Source: IQAir">
             <div class="bar-col"><span class="bar-val">5</span><span class="bar" style="--h:5;--c:var(--teal-light)"></span><span class="bar-label">WHO safe limit</span></div>
             <div class="bar-col"><span class="bar-val">39.9</span><span class="bar" style="--h:39.9;--c:var(--accent)"></span><span class="bar-label">Cairo 2024</span></div>
             <div class="bar-col"><span class="bar-val">40.8</span><span class="bar" style="--h:40.8;--c:var(--accent)"></span><span class="bar-label">Cairo 2025</span></div>
           </div>
-          <p class="chart-note">PM2.5 yearly average, µg/m³</p>
+          <p class="chart-source">Source: IQAir · yearly average, µg/m³</p>
+          <p class="fact">Cairo's 2025 average PM2.5 was about 40.8 µg/m³, around 8x the WHO limit of 5.</p>
         </article>
 
-        <!-- CARD: Causes of air pollution -->
-        <article class="card">
-          <h2 class="card-title">What causes it?</h2>
-          <ul class="icon-list">
-            <li><svg aria-hidden="true"><use href="#i-car"/></svg>Cars</li>
-            <li><svg aria-hidden="true"><use href="#i-factory"/></svg>Factories</li>
-            <li><svg aria-hidden="true"><use href="#i-fire"/></svg>Burning waste</li>
-            <li><svg aria-hidden="true"><use href="#i-dust"/></svg>Dust</li>
-            <li><svg aria-hidden="true"><use href="#i-city"/></svg>Urbanization</li>
+        <!-- SECTION: Causes, icons in dark circles with a label (like my Causes slide) -->
+        <section class="plain">
+          <h2 class="section-title">Causes of poor air quality</h2>
+          <ul class="cause-grid">
+            <li><span class="circle"><svg aria-hidden="true"><use href="#i-car"/></svg></span>Cars</li>
+            <li><span class="circle"><svg aria-hidden="true"><use href="#i-factory"/></svg></span>Factories</li>
+            <li><span class="circle"><svg aria-hidden="true"><use href="#i-fire"/></svg></span>Burning waste</li>
+            <li><span class="circle"><svg aria-hidden="true"><use href="#i-dust"/></svg></span>Dust</li>
+            <li><span class="circle"><svg aria-hidden="true"><use href="#i-city"/></svg></span>Urbanization</li>
           </ul>
-        </article>
+        </section>
 
-        <!-- BUTTON: Take the Air quiz (goes to Quiz) -->
-        <button class="btn btn-primary" type="button" data-go="quiz" aria-label="Test yourself in the quiz"><svg aria-hidden="true"><use href="#i-quiz"/></svg>Test yourself</button>
+        <!-- BUTTON: Quiz me (goes to Quiz) -->
+        <button class="btn btn-primary" type="button" data-go="quiz" aria-label="Quiz me on this">Quiz me</button>
       </div>
     </section>
 
     <!-- ================================================================
-         SCREEN: WASTE — short fact cards about city waste (tab)
+         SCREEN: WASTE — fact cards about city waste (tab)
          ================================================================ -->
     <section class="screen" id="screen-waste" data-title="Waste" data-tab="waste" aria-labelledby="title-waste" hidden>
       <header class="screen-header">
         <h1 class="screen-title" id="title-waste" tabindex="-1">Waste</h1>
       </header>
       <div class="screen-body">
-        <!-- CARD: How much waste -->
-        <article class="card">
-          <p class="big-stat">28<small>M tonnes</small></p>
-          <p class="fact strong">Egypt makes about 28 million tonnes of city waste a year, around 40% from Cairo.</p>
-          <div class="split-bar" role="img" aria-label="About 40 percent of Egypt's city waste comes from Cairo">
-            <span class="split-a" style="--w:40%">Cairo 40%</span><span class="split-b">Rest of Egypt</span>
-          </div>
-        </article>
+        <!-- STAT: How much waste (big number next to the fact) -->
+        <div class="stat-row">
+          <p class="big-stat">28M<small>tonnes a year</small></p>
+          <p class="stat-text">Egypt makes about 28 million tonnes of city waste a year, around 40% from Cairo.</p>
+        </div>
+        <div class="split-bar" role="img" aria-label="About 40 percent of Egypt's city waste comes from Cairo">
+          <span class="split-a" style="--w:40%">Cairo 40%</span><span class="split-b">rest of Egypt</span>
+        </div>
 
-        <!-- CARD: Where the waste goes -->
-        <article class="card">
-          <h2 class="card-title">Where does it go?</h2>
+        <!-- BAND: Where the waste goes -->
+        <div class="band">
+          <h2 class="section-title">Where does it go?</h2>
           <p class="fact strong">Around 88% goes to open dumps and only about 7% reaches proper landfills.</p>
           <div class="hbars" role="img" aria-label="88 percent open dumps, 7 percent proper landfills">
             <div class="hbar"><span class="hbar-label">Open dumps</span><span class="hbar-track"><span class="hbar-fill" style="--w:88%;--c:var(--red)"></span></span><b>88%</b></div>
             <div class="hbar"><span class="hbar-label">Landfills</span><span class="hbar-track"><span class="hbar-fill" style="--w:7%;--c:var(--teal-light)"></span></span><b>7%</b></div>
           </div>
-        </article>
+        </div>
 
         <!-- CARD: Recycling progress -->
         <article class="card">
-          <h2 class="card-title">Recycling is growing</h2>
+          <h2 class="section-title">Recycling is going up</h2>
           <p class="fact strong">Recycling went from 10% in 2018 to 37% in 2024. The goal is to have 60% by 2027.</p>
           <div class="hbars" role="img" aria-label="Recycling rate: 10 percent in 2018, 37 percent in 2024, goal of 60 percent by 2027">
             <div class="hbar"><span class="hbar-label">2018</span><span class="hbar-track"><span class="hbar-fill" style="--w:10%;--c:var(--accent)"></span></span><b>10%</b></div>
@@ -323,53 +342,57 @@
           </div>
         </article>
 
-        <!-- CARD: Solutions -->
-        <article class="card">
-          <h2 class="card-title">How Cairo can fix it</h2>
+        <!-- SECTION: Solutions, icons in dark circles -->
+        <section class="plain">
+          <h2 class="section-title">How Cairo can fix it</h2>
           <p class="fact">Better garbage truck routes and bringing informal collectors like the Zabbaleen into the system.</p>
           <ul class="icon-list">
-            <li><svg aria-hidden="true"><use href="#i-truck"/></svg>Better garbage truck routes</li>
-            <li><svg aria-hidden="true"><use href="#i-people"/></svg>Bring the Zabbaleen into the system</li>
+            <li><span class="circle"><svg aria-hidden="true"><use href="#i-truck"/></svg></span>Better garbage truck routes</li>
+            <li><span class="circle"><svg aria-hidden="true"><use href="#i-people"/></svg></span>Bring the Zabbaleen into the system</li>
           </ul>
-        </article>
+        </section>
 
         <!-- BUTTON: Play the sorting game -->
-        <button class="btn btn-primary" type="button" data-go="game" aria-label="Play the trash sorting game"><svg aria-hidden="true"><use href="#i-game"/></svg>Sort trash game</button>
+        <button class="btn btn-primary" type="button" data-go="game" aria-label="Play sort the trash">Play sort the trash</button>
       </div>
     </section>
 
     <!-- ================================================================
          SCREEN: PLAY — choose Quiz or Game (tab)
          ================================================================ -->
-    <section class="screen" id="screen-play" data-title="Play" data-tab="play" aria-labelledby="title-play" hidden>
+    <section class="screen deco-left deco-dashes" id="screen-play" data-title="Play" data-tab="play" aria-labelledby="title-play" hidden>
       <header class="screen-header">
         <h1 class="screen-title" id="title-play" tabindex="-1">Play</h1>
       </header>
       <div class="screen-body">
-        <p class="lead">Pick one. Beat your best.</p>
+        <p class="lead">Quiz or game? Beat your best.</p>
         <!-- BUTTON: Quiz card — opens the Quiz -->
         <button class="play-card" type="button" data-go="quiz" aria-label="Play the quiz">
-          <svg class="play-icon" aria-hidden="true"><use href="#i-quiz"/></svg>
+          <span class="circle big"><svg aria-hidden="true"><use href="#i-quiz"/></svg></span>
           <span class="play-name">Quiz</span>
-          <span class="play-desc">10 questions about air and waste</span>
-          <span class="play-best">Best: <b id="playBestQuiz">–</b></span>
+          <span class="play-desc">10 questions on air + trash</span>
+          <span class="play-best">Best <b id="playBestQuiz">–</b></span>
         </button>
         <!-- BUTTON: Game card — opens the sorting Game -->
-        <button class="play-card alt" type="button" data-go="game" aria-label="Play the trash sorting game">
-          <svg class="play-icon" aria-hidden="true"><use href="#i-game"/></svg>
-          <span class="play-name">Sort the Trash</span>
-          <span class="play-desc">Drag trash into the right bin. 60 seconds.</span>
-          <span class="play-best">Best: <b id="playBestGame">–</b></span>
+        <button class="play-card alt" type="button" data-go="game" aria-label="Play sort the trash">
+          <span class="circle big"><svg aria-hidden="true"><use href="#i-game"/></svg></span>
+          <span class="play-name">Sort the trash</span>
+          <span class="play-desc">Right bin, fast. 60 sec.</span>
+          <span class="play-best">Best <b id="playBestGame">–</b></span>
         </button>
         <!-- BUTTON: Leaderboard -->
-        <button class="btn btn-ghost" type="button" data-go="leaderboard" aria-label="Open the leaderboard"><svg aria-hidden="true"><use href="#i-trophy"/></svg>Leaderboard</button>
+        <button class="link-row" type="button" data-go="leaderboard" aria-label="Open the leaderboard">
+          <span class="circle small"><svg aria-hidden="true"><use href="#i-trophy"/></svg></span>
+          <span class="link-text">Leaderboard<small>See who's on top</small></span>
+          <svg class="chev" aria-hidden="true"><use href="#i-chevron"/></svg>
+        </button>
       </div>
     </section>
 
     <!-- ================================================================
          SCREEN: QUIZ — 10 random questions (inner screen)
          ================================================================ -->
-    <section class="screen" id="screen-quiz" data-title="Quiz" data-parent="play" aria-labelledby="title-quiz" hidden>
+    <section class="screen deco-dashes" id="screen-quiz" data-title="Quiz" data-parent="play" aria-labelledby="title-quiz" hidden>
       <header class="screen-header">
         <!-- BUTTON: Back -->
         <button class="back-btn" type="button" data-back aria-label="Go back"><svg aria-hidden="true"><use href="#i-back"/></svg><span>Back</span></button>
@@ -379,11 +402,11 @@
 
         <!-- QUIZ PART: Intro -->
         <div class="quiz-part" id="quizIntro">
-          <div class="hero-icon"><svg aria-hidden="true"><use href="#i-quiz"/></svg></div>
-          <p class="lead center">10 questions about Cairo's air and waste. New order every time.</p>
+          <span class="circle huge"><svg aria-hidden="true"><use href="#i-quiz"/></svg></span>
+          <p class="lead">10 questions about Cairo's air and trash. New order every time.</p>
           <p class="best-line">Your best: <b id="quizBestIntro">–</b></p>
           <!-- BUTTON: Start quiz -->
-          <button class="btn btn-primary btn-big" id="btnQuizStart" type="button" aria-label="Start the quiz">Start quiz</button>
+          <button class="btn btn-primary btn-big" id="btnQuizStart" type="button" aria-label="Start the quiz">Start</button>
         </div>
 
         <!-- QUIZ PART: Question -->
@@ -396,7 +419,7 @@
           <h2 class="quiz-q" id="quizQText">Question</h2>
           <!-- BUTTONS: the 4 answers are made in js/quiz.js -->
           <div class="answers" id="quizAnswers" role="group" aria-labelledby="quizQText"></div>
-          <!-- CARD: right / wrong feedback with the fact -->
+          <!-- BOX: right / wrong feedback with the fact -->
           <div class="feedback" id="quizFeedback" role="status" aria-live="polite" hidden>
             <p class="feedback-title" id="quizFeedbackTitle"></p>
             <p class="feedback-fact" id="quizFeedbackFact"></p>
@@ -407,15 +430,18 @@
 
         <!-- QUIZ PART: Final score -->
         <div class="quiz-part" id="quizEnd" hidden>
-          <div class="hero-icon gold"><svg aria-hidden="true"><use href="#i-trophy"/></svg></div>
           <p class="end-score"><span id="quizFinal">0</span><small>/10</small></p>
-          <p class="lead center" id="quizEndMsg">Nice work!</p>
+          <p class="lead" id="quizEndMsg">Nice!</p>
           <p class="best-line" id="quizEndBest">Best: –</p>
           <p class="sync-line" id="quizSync"></p>
           <!-- BUTTON: Play quiz again -->
-          <button class="btn btn-primary btn-big" id="btnQuizAgain" type="button" aria-label="Play the quiz again">Play again</button>
+          <button class="btn btn-primary btn-big" id="btnQuizAgain" type="button" aria-label="Play the quiz again">Go again</button>
           <!-- BUTTON: Open leaderboard -->
-          <button class="btn btn-ghost" type="button" data-go="leaderboard" aria-label="Open the leaderboard"><svg aria-hidden="true"><use href="#i-trophy"/></svg>Leaderboard</button>
+          <button class="link-row" type="button" data-go="leaderboard" aria-label="Open the leaderboard">
+            <span class="circle small"><svg aria-hidden="true"><use href="#i-trophy"/></svg></span>
+            <span class="link-text">Leaderboard<small>See where you rank</small></span>
+            <svg class="chev" aria-hidden="true"><use href="#i-chevron"/></svg>
+          </button>
         </div>
       </div>
     </section>
@@ -423,17 +449,17 @@
     <!-- ================================================================
          SCREEN: GAME — sort falling trash into bins (inner screen)
          ================================================================ -->
-    <section class="screen screen-game" id="screen-game" data-title="Sort the Trash" data-parent="play" aria-labelledby="title-game" hidden>
+    <section class="screen screen-game" id="screen-game" data-title="Sort the trash" data-parent="play" aria-labelledby="title-game" hidden>
       <header class="screen-header">
         <!-- BUTTON: Back -->
         <button class="back-btn" type="button" data-back aria-label="Go back"><svg aria-hidden="true"><use href="#i-back"/></svg><span>Back</span></button>
-        <h1 class="screen-title" id="title-game" tabindex="-1">Sort the Trash</h1>
+        <h1 class="screen-title" id="title-game" tabindex="-1">Sort the trash</h1>
       </header>
       <!-- GAME HUD: score, time and best -->
       <div class="game-hud" aria-live="off">
         <span class="hud-item" aria-label="Score"><svg aria-hidden="true"><use href="#i-star"/></svg><b id="gameScore">0</b></span>
         <span class="hud-item" aria-label="Time left"><svg aria-hidden="true"><use href="#i-clock"/></svg><b id="gameTime">60</b>s</span>
-        <span class="hud-item" aria-label="Best score">Best <b id="gameBest">0</b></span>
+        <span class="hud-item muted" aria-label="Best score">Best <b id="gameBest">0</b></span>
         <!-- BUTTON: Pause game -->
         <button class="icon-btn small" id="btnGamePause" type="button" aria-label="Pause game"><svg aria-hidden="true"><use href="#i-pause"/></svg></button>
       </div>
@@ -454,8 +480,8 @@
         <!-- OVERLAY: start / pause / game over messages -->
         <div class="game-overlay" id="gameOverlay">
           <div class="overlay-card">
-            <h2 class="overlay-title" id="gameOverlayTitle">Sort the trash!</h2>
-            <p class="overlay-text" id="gameOverlayText">Drag each item into the right bin. Or tap it, then tap a bin. 60 seconds.</p>
+            <h2 class="overlay-title" id="gameOverlayTitle">Sort the trash</h2>
+            <p class="overlay-text" id="gameOverlayText">Drag each thing into the right bin. Or tap it, then tap a bin. You've got 60 seconds.</p>
             <ul class="overlay-rules" id="gameRules">
               <li><b>+10</b> right bin</li>
               <li><b>−5</b> wrong bin</li>
@@ -471,30 +497,27 @@
     <!-- ================================================================
          SCREEN: TAKE ACTION — daily actions with streak (tab)
          ================================================================ -->
-    <section class="screen" id="screen-action" data-title="Take Action" data-tab="action" aria-labelledby="title-action" hidden>
+    <section class="screen deco-dashes" id="screen-action" data-title="Take Action" data-tab="action" aria-labelledby="title-action" hidden>
       <header class="screen-header">
-        <h1 class="screen-title" id="title-action" tabindex="-1">Take Action</h1>
+        <h1 class="screen-title" id="title-action" tabindex="-1">Take action</h1>
       </header>
       <div class="screen-body">
-        <!-- CARD: Streak counter -->
-        <div class="streak" aria-live="polite">
-          <svg aria-hidden="true"><use href="#i-calendar"/></svg>
-          <div>
-            <p class="streak-num"><span id="streakNum">0</span> day streak</p>
-            <p class="streak-sub">Today: <span id="todayCount">0</span>/3 done</p>
-          </div>
+        <!-- BAND: Streak counter -->
+        <div class="band streak" aria-live="polite">
+          <p class="streak-num" id="streakNum">0</p>
+          <p class="streak-text">day streak<br><span>Today: <span id="todayCount">0</span>/3 done</span></p>
         </div>
-        <p class="lead">Do it in real life. Then tick it here.</p>
-        <!-- LIST: action cards (made in js/actions.js) -->
+        <p class="lead">Do it for real, then tick it.</p>
+        <!-- LIST: action rows (made in js/actions.js) -->
         <div class="action-list" id="actionList"></div>
-        <p class="small-note">Every tick is added to the "Everyone together" total.</p>
+        <p class="small-note">Every tick adds to the total on Home.</p>
       </div>
     </section>
 
     <!-- ================================================================
          SCREEN: LEADERBOARD — top 10 quiz and game scores (inner screen)
          ================================================================ -->
-    <section class="screen" id="screen-leaderboard" data-title="Leaderboard" data-parent="home" aria-labelledby="title-leaderboard" hidden>
+    <section class="screen deco-left" id="screen-leaderboard" data-title="Leaderboard" data-parent="home" aria-labelledby="title-leaderboard" hidden>
       <header class="screen-header">
         <!-- BUTTON: Back -->
         <button class="back-btn" type="button" data-back aria-label="Go back"><svg aria-hidden="true"><use href="#i-back"/></svg><span>Back</span></button>
@@ -529,7 +552,7 @@
         <p class="lead">Where my facts come from.</p>
         <!-- LIST: source links (made in js/app.js from js/data.js) -->
         <ul class="source-list" id="sourceList"></ul>
-        <p class="credit left">Made by Mahmoud Etman 9E · SDG 11.6</p>
+        <p class="credit">by Mahmoud Etman · SDG 11.6</p>
       </div>
     </section>
 
@@ -538,7 +561,7 @@
   <!-- ====================================================================
        TAB BAR: Home, Air, Waste, Play, Action (only on main screens)
        ==================================================================== -->
-  <nav class="tab-bar" id="tabBar" aria-label="Main tabs">
+  <nav class="tab-bar is-hidden" id="tabBar" aria-label="Main tabs">
     <!-- BUTTON: Home tab -->
     <button class="tab" type="button" data-tab-go="home" aria-label="Home"><svg aria-hidden="true"><use href="#i-home"/></svg><span>Home</span></button>
     <!-- BUTTON: Air tab -->
@@ -554,7 +577,7 @@
   <!-- HOME INDICATOR: the small bar at the bottom of an iPhone (decoration) -->
   <div class="home-indicator" aria-hidden="true"></div>
 
-  <!-- TOAST: short pop-up messages like "Saved offline" -->
+  <!-- TOAST: short pop-up messages like "Saved" -->
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </div>
 

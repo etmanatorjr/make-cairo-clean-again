@@ -20,7 +20,7 @@ var Leaderboard = (function () {
     if (!data) return;
     var rows = data[view] || [];
     if (!rows.length) {
-      list.innerHTML = '<li class="lb-empty">No scores yet. Be the first!</li>';
+      list.innerHTML = '<li class="lb-empty">No scores yet. Go first!</li>';
     }
     rows.forEach(function (row, i) {
       var li = document.createElement('li');
@@ -35,7 +35,7 @@ var Leaderboard = (function () {
 
     var rank = data.myRank ? data.myRank[view] : null;
     $('lbMe').textContent = !Store.hasName() ? '' :
-      rank ? 'Your rank: #' + rank : 'Play to get on the board!';
+      rank ? "You're #" + rank : 'Play to get on here.';
   }
 
   /** Switch between the Quiz and Game lists. */
@@ -60,7 +60,7 @@ var Leaderboard = (function () {
       $('lbStatus').textContent = 'Live from the Google Sheet';
       render();
     }).catch(function () {
-      $('lbStatus').textContent = data ? 'Offline: showing saved scores' : "Can't load. Check your internet.";
+      $('lbStatus').textContent = data ? 'Offline. Showing the last scores.' : "Can't load. Check your internet.";
       render();
     });
   }

@@ -128,6 +128,8 @@ var Router = (function () {
   /** First screen when the app opens. */
   function start(firstScreen) {
     index = 0;
+    tabBar.classList.add('no-anim');            // no slide on the very first screen
+    setTimeout(function () { tabBar.classList.remove('no-anim'); }, 50);
     history.replaceState({ screen: firstScreen, i: 0 }, '', '#' + firstScreen);
     show(firstScreen, 'fade');
   }

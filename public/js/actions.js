@@ -35,10 +35,10 @@ var Actions = (function () {
     DATA.ACTIONS.forEach(function (a) {
       var isDone = done.indexOf(a.id) !== -1;
       var card = document.createElement('article');
-      card.className = 'action-card';
+      card.className = 'action-row';
       card.innerHTML =
-        '<span class="action-icon"><svg aria-hidden="true"><use href="#' + a.icon + '"/></svg></span>' +
-        '<h2 class="action-name"></h2><p class="action-desc"></p>' +
+        '<span class="circle"><svg aria-hidden="true"><use href="#' + a.icon + '"/></svg></span>' +
+        '<div class="action-text"><h2 class="action-name"></h2><p class="action-desc"></p></div>' +
         // BUTTON: tick this action as done today
         '<button class="action-btn" type="button"></button>';
       card.querySelector('.action-name').textContent = a.name;
@@ -47,8 +47,8 @@ var Actions = (function () {
       btn.setAttribute('aria-pressed', isDone ? 'true' : 'false');
       btn.setAttribute('aria-label', isDone ? a.name + ': done today' : 'Mark "' + a.name + '" as done today');
       btn.innerHTML = isDone
-        ? '<svg aria-hidden="true"><use href="#i-check"/></svg>Done today'
-        : 'I did it today';
+        ? '<svg aria-hidden="true"><use href="#i-check"/></svg>Done'
+        : 'Did it';
       btn.addEventListener('click', function () { tick(a, btn); });
       list.appendChild(card);
     });
@@ -68,10 +68,10 @@ var Actions = (function () {
 
     Api.sendAction(action.id).then(function (result) {
       if (result === 'sent') {
-        App.toast('Nice! "' + action.name + '" added for Cairo.');
+        App.toast('Nice. Added to the Cairo total.');
         App.refreshStats();
       } else if (result === 'queued') {
-        App.toast('Saved. It will be sent when you are online.');
+        App.toast("Saved. It'll send when you're online.");
       }
     });
   }
@@ -79,7 +79,7 @@ var Actions = (function () {
   /** The little line on the Home "Take Action" button. */
   function updateHome() {
     var s = streak();
-    $('homeStreak').textContent = s > 0 ? s + ' day streak · ' + doneToday().length + '/3 today' : 'Start your streak today';
+    $('homeStreak').textContent = s > 0 ? s + ' day streak · ' + doneToday().length + '/3 today' : 'Start a streak';
   }
 
   return { render: render, updateHome: updateHome, streak: streak };

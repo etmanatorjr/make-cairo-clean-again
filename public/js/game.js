@@ -79,7 +79,7 @@ var Game = (function () {
     timeLeft = duration();
     setHud();
     $('gameSync').textContent = '';
-    showOverlay('Sort the trash!', 'Drag each item into the right bin. Or tap it, then tap a bin. 60 seconds.', 'Start', 'Start the game', true);
+    showOverlay('Sort the trash', "Drag each thing into the right bin. Or tap it, then tap a bin. You've got 60 seconds.", 'Start', 'Start the game', true);
   }
 
   function start() {
@@ -99,7 +99,7 @@ var Game = (function () {
     state = 'paused';
     stopLoop();
     endDrag(null);
-    showOverlay('Paused', 'Take a breath. Your time is stopped.', 'Resume', 'Resume the game', false);
+    showOverlay('Paused', "Timer's stopped.", 'Keep going', 'Resume the game', false);
   }
 
   function resume() {
@@ -115,15 +115,15 @@ var Game = (function () {
     clearItems();
     var isBest = Store.saveBest('game', score);
     setHud();
-    showOverlay('Time is up!',
-      'You scored ' + score + ' points. ' + (isBest ? 'New best score!' : 'Best: ' + Store.bestGame() + '.'),
-      'Play again', 'Play the game again', false);
-    $('gameSync').textContent = 'Saving your score…';
+    showOverlay("Time's up",
+      'You got ' + score + ' points. ' + (isBest ? 'New best!' : 'Your best: ' + Store.bestGame() + '.'),
+      'Go again', 'Play the game again', false);
+    $('gameSync').textContent = 'Saving…';
     Api.sendScore('game', score).then(function (result) {
       $('gameSync').textContent =
-        result === 'sent' ? 'Score saved to the leaderboard.' :
-        result === 'queued' ? 'Offline. Your score will be sent later.' :
-        'Could not save this score.';
+        result === 'sent' ? 'Saved to the leaderboard.' :
+        result === 'queued' ? "No internet. It'll send later." :
+        "Couldn't save this one.";
     });
   }
 
@@ -143,6 +143,7 @@ var Game = (function () {
   function stopLoop() { cancelAnimationFrame(raf); raf = 0; }
 
   function tick(now) {
+    if (state !== 'playing') return;                       // stopped, paused or left the screen
     var dt = Math.min(0.05, (now - lastFrame) / 1000);   // seconds since last frame
     lastFrame = now;
 
