@@ -72,15 +72,15 @@ var DATA = (function () {
   ];
 
   // ----- Works cited (from my presentation) + the live data API -----
-  // TODO (Mahmoud): replace each link with the exact page from my works cited.
+  // Each link goes to the exact page the fact came from.
   var SOURCES = [
-    { name: 'EcoHubMap', what: 'Cairo air pollution facts', url: 'https://www.ecohubmap.com/' },
+    { name: 'EcoHubMap', what: 'Air pollution in Cairo, Egypt', url: 'https://www.ecohubmap.com/hot-spot/air-pollution-in-cairo-egypt/1kamamlb968s6k' },
     { name: 'The Global Goals', what: 'Goal 11: Sustainable cities (target 11.6)', url: 'https://www.globalgoals.org/goals/11-sustainable-cities-and-communities/' },
     { name: 'IQAir', what: 'Cairo PM2.5 yearly averages', url: 'https://www.iqair.com/egypt/cairo' },
     { name: 'WHO', what: 'PM2.5 health effects and the safe limit of 5 µg/m³', url: 'https://www.who.int/news-room/fact-sheets/detail/ambient-(outdoor)-air-quality-and-health' },
-    { name: 'Egypt Today', what: 'Egypt waste and recycling news', url: 'https://www.egypttoday.com/' },
-    { name: 'ScienceDirect', what: 'Research on waste in Egypt', url: 'https://www.sciencedirect.com/' },
-    { name: 'Waste & Recycling Magazine', what: 'Waste management and the Zabbaleen', url: 'https://www.wasterecyclingmag.com/' },
+    { name: 'Egypt Today', what: 'Egypt targets 60% waste recycling by 2027 (2025)', url: 'https://www.egypttoday.com/Article/1/140752/Egypt-Targets-60-Waste-Recycling-Rate-by-2027' },
+    { name: 'ScienceDirect', what: 'Smart waste collection in Greater Cairo (Ain Shams Engineering Journal, 2023)', url: 'https://www.sciencedirect.com/science/article/pii/S2090447923000722' },
+    { name: 'Waste & Recycling Magazine', what: "An overview of Egypt's waste management landscape (2024)", url: 'https://www.wasterecyclingmag.com/news/waste-management/an-overview-of-egypt-s-waste-management-landscape' },
     { name: 'Open-Meteo', what: 'Live Cairo air quality API (free, no key)', url: 'https://open-meteo.com/en/docs/air-quality-api' }
   ];
 
