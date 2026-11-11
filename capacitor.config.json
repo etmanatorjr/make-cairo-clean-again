@@ -2,6 +2,7 @@
   "appId": "com.mahmoudetman.makecairoclean",
   "appName": "Make Cairo Clean Again",
   "webDir": "www",
+  "backgroundColor": "#154C4A",
   "android": {
     "allowMixedContent": false
   },
