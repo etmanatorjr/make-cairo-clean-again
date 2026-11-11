@@ -9,6 +9,21 @@
     "dev": "node dev/server.js",
     "dev:mock": "node dev/server.js --mock",
     "mock-sheet": "node dev/mock-apps-script.js",
-    "test": "node --test tests/api.test.js"
+    "test": "node --test tests/api.test.js",
+    "build": "node scripts/build.js",
+    "android:sync": "npm run build && npx cap sync android",
+    "android:apk": "npm run android:sync && cd android && ./gradlew assembleDebug && cp app/build/outputs/apk/debug/app-debug.apk ../make-cairo-clean-again.apk",
+    "android:open": "npx cap open android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.6.0",
+    "@capacitor/app": "^8.1.2",
+    "@capacitor/core": "^8.6.0",
+    "@capacitor/splash-screen": "^8.0.2",
+    "@capacitor/status-bar": "^8.0.4"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^4.0.0",
+    "@capacitor/cli": "^8.6.0"
   }
 }

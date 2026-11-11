@@ -9,8 +9,7 @@ node_modules/
 # Vercel
 .vercel/
 
-# Android / Capacitor build files (for the APK later)
-android/
+# Android / Capacitor build files
 ios/
 *.apk
 *.aab
@@ -28,3 +27,17 @@ local.properties
 
 # Claude Code local settings
 .claude/
+
+# Capacitor / Android
+www/
+android/app/build/
+android/build/
+android/.gradle/
+android/.idea/
+android/local.properties
+android/capacitor-cordova-android-plugins/build/
+android/app/src/main/assets/public/
+android/app/src/main/assets/capacitor.config.json
+android/app/src/main/assets/capacitor.plugins.json
+android/app/src/main/res/xml/config.xml
+make-cairo-clean-again.apk

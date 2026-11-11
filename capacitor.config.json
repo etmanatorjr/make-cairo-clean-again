@@ -1,0 +1,26 @@
+{
+  "appId": "com.mahmoudetman.makecairoclean",
+  "appName": "Make Cairo Clean Again",
+  "webDir": "www",
+  "android": {
+    "allowMixedContent": false
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 1000,
+      "launchAutoHide": true,
+      "backgroundColor": "#154C4A",
+      "showSpinner": false
+    },
+    "SystemBars": {
+      "insetsHandling": "css",
+      "style": "DARK",
+      "initialViewportFitValueHint": "cover"
+    },
+    "StatusBar": {
+      "style": "DARK",
+      "backgroundColor": "#0B2827",
+      "overlaysWebView": false
+    }
+  }
+}
