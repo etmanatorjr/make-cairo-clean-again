@@ -23,12 +23,14 @@ module.exports = async function handler(req, res) {
 
   try {
     const data = await readBoard(nick.ok ? nick.value : '');
-    // let Vercel's CDN keep the answer for 10 seconds so the sheet is not hit too often
-    res.setHeader('Cache-Control', 'public, max-age=0, s-maxage=10, stale-while-revalidate=30');
+    // let Vercel's CDN keep the answer for 5 seconds so the sheet is not hit too often
+    res.setHeader('Cache-Control', 'public, max-age=0, s-maxage=5');
+    // only send what the app needs: nickname and score
+    const clean = (list) => (list || []).map((r) => ({ nickname: String(r.nickname), score: Number(r.score) }));
     return send(res, 200, {
       ok: true,
-      quiz: data.quiz || [],
-      game: data.game || [],
+      quiz: clean(data.quiz),
+      game: clean(data.game),
       myRank: data.myRank || { quiz: null, game: null },
       updated: data.updated
     });

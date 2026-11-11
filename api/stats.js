@@ -18,7 +18,7 @@ module.exports = async function handler(req, res) {
 
   try {
     const data = await readBoard('');
-    res.setHeader('Cache-Control', 'public, max-age=0, s-maxage=10, stale-while-revalidate=30');
+    res.setHeader('Cache-Control', 'public, max-age=0, s-maxage=5');
     return send(res, 200, { ok: true, totals: data.totals, updated: data.updated });
   } catch (e) {
     console.error('stats failed:', e.message);
