@@ -158,8 +158,10 @@ The API already allows the Capacitor origins (`https://localhost`, `capacitor://
 
 ## Google Sheet columns
 
-- **Scores:** time | first name | initial | type | score
-- **Actions:** time | first name | initial | action
+- **Scores:** Time | Name | Type | Score
+- **Actions:** Time | Name | Action
+
+Name is first name + last name initial, like "Mahmoud E.". Headers can have any capitals.
 
 ## Sources
 

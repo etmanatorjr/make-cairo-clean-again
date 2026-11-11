@@ -181,7 +181,7 @@ After testing version 1, I made two big improvements.
 - **What changed:**
   - The Name screen asks for a first name (English letters A–Z only, 2–15 letters) and a last name initial (exactly 1 letter). They're saved in localStorage and can be edited from Home.
   - Home and the leaderboard show names like "Mahmoud E.".
-  - The server checks the same rules again. `Code.gs` now has the columns `time | first name | initial | type | score` and `time | first name | initial | action`.
+  - The server checks the same rules again. In my Google Sheet I made the headers myself: `Time | Name | Type | Score` and `Time | Name | Action`. `Code.gs` saves the name as one value ("Mahmoud E.") and matches the headers without caring about capitals, so my own header formatting stays.
   - Old tabs with the nickname columns are renamed "(old)" instead of deleted, so no data is lost.
 - **What I researched:** regular expressions for "letters only" (`/^[A-Za-z]+$/`); keeping app and server rules the same with one shared file; changing a database's columns without losing old data.
 - **Docs:** https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions · https://developers.google.com/apps-script/reference/spreadsheet/sheet#setName(String)
@@ -189,8 +189,8 @@ After testing version 1, I made two big improvements.
   - Rules (`public/js/rules.js`): first name at line 79, initial at 91, whole name at 102, "Mahmoud E." at 112.
   - App: `public/js/storage.js:61`, `public/js/app.js:69`, `public/index.html:123`.
   - Server: `api/score.js:23`, `api/action.js:23`, `api/leaderboard.js:22`.
-  - Sheet (`google-apps-script/Code.gs`): columns at line 28, moving old tabs aside at 145, best score per person at 177, A–Z check at 218.
-- **Tests:** `tests/api.test.js:13` (name rules, including rejecting Arabic letters, spaces, numbers and bad words) and `:91` (old nickname tab kept as "Scores (old)"). 15/15 pass.
+  - Sheet (`google-apps-script/Code.gs`): columns at line 31, "Mahmoud E." at 63, moving old tabs aside at 149, best score per person at 186, A–Z check at 227.
+- **Tests:** `tests/api.test.js:13` (name rules, including rejecting Arabic letters, spaces, numbers and bad words). Other tests check that an old nickname tab is kept as "Scores (old)" and that a tab I made by hand with capital headers is kept. 15/15 pass.
 
 ### 5.2 Colours and style from my SDG 11.6 PowerPoint
 - **Why:** version 1 looked like a generic app template. Version 2 matches my presentation, so the app and the slides feel like one project.

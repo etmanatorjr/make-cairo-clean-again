@@ -6,12 +6,15 @@
  * Paste this whole file into Extensions > Apps Script of my Google Sheet.
  *
  * Tabs it uses (made automatically if missing):
- *   Scores  : time | first name | initial | type | score
- *   Actions : time | first name | initial | action
- * Names show as "Mahmoud E." on the leaderboard.
+ *   Scores  : Time | Name | Type | Score
+ *   Actions : Time | Name | Action
+ * Name is first name + last name initial, like "Mahmoud E."
+ * Headers are matched without caring about capitals, and my own header
+ * formatting (colours, bold) is never changed.
  *
- * If a tab still has the OLD columns (time | nickname | ...), it is renamed to
- * "Scores (old)" / "Actions (old)" and a fresh tab is made. Nothing is deleted.
+ * If a tab has DIFFERENT columns (like the old "nickname" version), it is
+ * renamed to "Scores (old)" / "Actions (old)" and a fresh tab is made.
+ * Nothing is deleted.
  *
  * doPost  -> adds ONE row (a score or an action)
  * doGet   -> returns JSON: top 10 quiz, top 10 game, totals (and my rank)
@@ -25,8 +28,8 @@
 
 var SCORES = 'Scores';
 var ACTIONS = 'Actions';
-var SCORE_HEADERS = ['time', 'first name', 'initial', 'type', 'score'];
-var ACTION_HEADERS = ['time', 'first name', 'initial', 'action'];
+var SCORE_HEADERS = ['Time', 'Name', 'Type', 'Score'];
+var ACTION_HEADERS = ['Time', 'Name', 'Action'];
 
 // Same rules as the app and the Vercel API (a second check, just in case)
 var SCORE_RULES = { quiz: { min: 0, max: 10 }, game: { min: 0, max: 1000 } };
@@ -57,6 +60,7 @@ function doPost(e) {
   var firstName = cleanFirstName_(body.firstName);
   var initial = cleanInitial_(body.initial);
   if (!firstName || !initial) return json_({ ok: false, error: 'bad_name' });
+  var name = firstName + ' ' + initial + '.';          // "Mahmoud E." 
 
   var row, sheetName, headers;
   if (body.kind === 'score') {
@@ -67,12 +71,12 @@ function doPost(e) {
     }
     sheetName = SCORES;
     headers = SCORE_HEADERS;
-    row = [new Date(), firstName, initial, body.type, score];
+    row = [new Date(), name, body.type, score];
   } else if (body.kind === 'action') {
     if (ACTION_LIST.indexOf(body.action) === -1) return json_({ ok: false, error: 'bad_action' });
     sheetName = ACTIONS;
     headers = ACTION_HEADERS;
-    row = [new Date(), firstName, initial, body.action];
+    row = [new Date(), name, body.action];
   } else {
     return json_({ ok: false, error: 'bad_kind' });
   }
@@ -97,7 +101,7 @@ function doGet(e) {
   var p = (e && e.parameter) || {};
   if (!checkSecret_(p.secret)) return json_({ ok: false, error: 'unauthorized' });
 
-  // rows: [time, first name, initial, type, score] and [time, first name, initial, action]
+  // rows: [Time, Name, Type, Score] and [Time, Name, Action]
   var scores = readRows_(SCORES, SCORE_HEADERS);
   var actions = readRows_(ACTIONS, ACTION_HEADERS);
 
@@ -109,16 +113,16 @@ function doGet(e) {
   var byAction = { recycle: 0, metro: 0, noburn: 0 };
   var quizzes = 0, games = 0;
   scores.forEach(function (r) {
-    players[keyOf_(r[1], r[2])] = true;
-    if (r[3] === 'quiz') quizzes++;
-    if (r[3] === 'game') games++;
+    players[keyOf_(r[1])] = true;
+    if (r[2] === 'quiz') quizzes++;
+    if (r[2] === 'game') games++;
   });
   actions.forEach(function (r) {
-    players[keyOf_(r[1], r[2])] = true;
-    if (byAction.hasOwnProperty(r[3])) byAction[r[3]]++;
+    players[keyOf_(r[1])] = true;
+    if (byAction.hasOwnProperty(r[2])) byAction[r[2]]++;
   });
 
-  var me = p.firstName ? keyOf_(p.firstName, p.initial || '') : '';
+  var me = p.firstName ? keyOf_(p.firstName + ' ' + (p.initial || '') + '.') : '';
   return json_({
     ok: true,
     quiz: quizAll.slice(0, 10).map(publicRow_),
@@ -147,7 +151,7 @@ function getSheet_(name, headers) {
   var sheet = ss.getSheetByName(name);
   if (sheet && sheet.getLastRow() > 0) {
     var first = sheet.getRange(1, 1, 1, headers.length).getValues()[0];
-    if (first.join('|') !== headers.join('|')) {
+    if (headerKey_(first) !== headerKey_(headers)) {
       var oldName = name + ' (old)';
       if (ss.getSheetByName(oldName)) oldName = name + ' (old ' + new Date().getTime() + ')';
       sheet.setName(oldName);
@@ -162,28 +166,33 @@ function getSheet_(name, headers) {
   return sheet;
 }
 
+/** "Time|Name|Type|Score" in small letters, so capitals and spaces don't matter. */
+function headerKey_(row) {
+  return row.map(function (h) { return String(h).trim().toLowerCase(); }).join('|');
+}
+
 /** All data rows of a tab (without the header row). */
 function readRows_(name, headers) {
   var values = getSheet_(name, headers).getDataRange().getValues();
   return values.slice(1).filter(function (r) { return r[1] !== '' && r[1] !== null; });
 }
 
-/** "Mahmoud", "E" -> "mahmoud|e" (so the same person is counted once) */
-function keyOf_(firstName, initial) {
-  return String(firstName).toLowerCase() + '|' + String(initial).toLowerCase();
+/** "Mahmoud E." -> "mahmoud e." (so the same person is counted once) */
+function keyOf_(name) {
+  return String(name).trim().toLowerCase();
 }
 
 /** Best score per person, highest first (ties: whoever got it first). */
 function bestPerPerson_(rows, type) {
   var best = {};
   rows.forEach(function (r) {
-    if (r[3] !== type) return;
-    var key = keyOf_(r[1], r[2]);
-    var score = Number(r[4]);
+    if (r[2] !== type) return;
+    var key = keyOf_(r[1]);
+    var score = Number(r[3]);
     var time = r[0] instanceof Date ? r[0].getTime() : new Date(r[0]).getTime();
     var old = best[key];
     if (!old || score > old.score || (score === old.score && time < old.t)) {
-      best[key] = { name: String(r[1]) + ' ' + String(r[2]) + '.', score: score, t: time, key: key };
+      best[key] = { name: String(r[1]), score: score, t: time, key: key };
     }
   });
   return Object.keys(best).map(function (k) { return best[k]; })

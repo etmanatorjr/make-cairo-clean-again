@@ -78,13 +78,16 @@ test('API routes with the mock Apps Script', async (t) => {
   const old = mock.spreadsheet.insertSheet('Scores');
   old.appendRow(['time', 'nickname', 'type', 'score']);
   old.appendRow([new Date(), 'Old Nick', 'quiz', 9]);
+  // An "Actions" tab made by hand with capital headers, like my real sheet
+  const mine = mock.spreadsheet.insertSheet('Actions');
+  mine.appendRow(['Time', 'Name', 'Action']);
 
   await t.test('POST /api/score saves a row (following the 302 redirect)', async () => {
     const r = await call(score, { method: 'POST', body: { firstName: 'mahmoud', initial: 'e', type: 'quiz', score: 8 } });
     assert.strictEqual(r.status, 201, JSON.stringify(r.json));
     const rows = mock.spreadsheet.tabs.Scores.rows;
-    assert.deepStrictEqual(Array.from(rows[0]), ['time', 'first name', 'initial', 'type', 'score'], 'new headers');
-    assert.deepStrictEqual(Array.from(rows[1]).slice(1), ['Mahmoud', 'E', 'quiz', 8], 'name saved with capitals');
+    assert.deepStrictEqual(Array.from(rows[0]), ['Time', 'Name', 'Type', 'Score'], 'new headers');
+    assert.deepStrictEqual(Array.from(rows[1]).slice(1), ['Mahmoud E.', 'quiz', 8], 'name saved as "Mahmoud E."');
     assert.ok(mock.stats.echoes >= 1, 'redirect was followed');
   });
 
@@ -105,9 +108,11 @@ test('API routes with the mock Apps Script', async (t) => {
     const r = await call(action, { method: 'POST', body: { firstName: 'Mahmoud', initial: 'E', action: 'metro' } });
     assert.strictEqual(r.status, 201);
     await call(action, { method: 'POST', body: { firstName: 'Sara', initial: 'M', action: 'recycle' } });
-    const rows = mock.spreadsheet.tabs.Actions.rows;
-    assert.deepStrictEqual(Array.from(rows[0]), ['time', 'first name', 'initial', 'action']);
-    assert.deepStrictEqual(Array.from(rows[1]).slice(1), ['Mahmoud', 'E', 'metro']);
+    const tab = mock.spreadsheet.tabs.Actions;
+    assert.strictEqual(tab, mine, 'my hand-made tab with capital headers was kept, not replaced');
+    assert.ok(!mock.spreadsheet.tabs['Actions (old)'], 'it was not moved aside');
+    assert.deepStrictEqual(Array.from(tab.rows[0]), ['Time', 'Name', 'Action'], 'my headers untouched');
+    assert.deepStrictEqual(Array.from(tab.rows[1]).slice(1), ['Mahmoud E.', 'metro']);
   });
 
   await t.test('bad input is rejected with 400 and never reaches the sheet', async () => {
