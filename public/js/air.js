@@ -34,7 +34,6 @@ var Air = (function () {
     $('aqiNum').textContent = aqi;
     $('aqiNum').setAttribute('aria-label', 'AQI ' + aqi);
     $('aqiLevel').textContent = level.name;
-    $('aqiPm').textContent = 'PM2.5 ' + result.pm25.toFixed(1) + ' µg/m³';
     $('aqiTip').textContent = level.tip;
     $('homeAqi').textContent = 'AQI ' + aqi;
     $('homeAqi').style.background = level.color;
@@ -42,8 +41,7 @@ var Air = (function () {
 
   function renderError() {
     $('aqiNum').textContent = '--';
-    $('aqiLevel').textContent = 'No data';
-    $('aqiPm').textContent = 'Check your internet';
+    $('aqiLevel').textContent = 'No data. Check your internet.';
     $('aqiTip').textContent = "Take the metro and don't burn trash.";
     $('homeAqi').textContent = 'AQI --';
   }

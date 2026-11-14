@@ -32,8 +32,8 @@ Evidence for my teacher (every extra skill, what I researched, and where it is i
 | Splash | App name, logo, Start button |
 | Name | First time only: first name (A–Z, max 15) + last name initial (1 letter), shown as "Mahmoud E." Bad words blocked. |
 | Home | Hey + my name, "everyone together" totals from the sheet, buttons |
-| Air | PM2.5 and AQI explained, live Cairo AQI with a tip, bar chart, causes |
-| Waste | Fact cards: how much waste, where it goes, recycling, solutions |
+| Air | Live Cairo AQI with a tip, what PM2.5 is in one line, the PM2.5 chart, causes |
+| Waste | How much waste, where it goes, recycling and how to fix it, as short charts and lists |
 | Play | Choose Quiz or Game |
 | Quiz | 10 random questions, shuffled answers, right/wrong with the fact, best score |
 | Game | Sort falling trash into 4 bins in 60 seconds, drag or tap |

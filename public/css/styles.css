@@ -229,13 +229,8 @@ a { color: var(--accent); }
 .aqi-main { display: flex; align-items: center; gap: 16px; }
 .aqi-num { font-size: 60px; font-weight: 800; line-height: 1; min-width: 86px; color: var(--aqi); }
 .aqi-level { font-size: 22px; font-weight: 800; text-transform: uppercase; }
-.aqi-pm { color: var(--cream); font-size: 15px; }
 .aqi-tip { font-weight: 700; }
 
-/* AQI colour strip */
-.aqi-strip { list-style: none; display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
-.aqi-strip li { font-size: 12px; line-height: 1.25; color: var(--cream); padding-top: 8px; border-top: 10px solid var(--c); }
-.aqi-strip b { display: block; color: var(--text); }
 
 /* PM2.5 bar chart (like my slide) */
 .bar-chart { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; align-items: end; height: 200px; padding-top: 8px; }
@@ -256,9 +251,6 @@ a { color: var(--accent); }
 .big-stat { font-size: 60px; font-weight: 800; line-height: .9; color: var(--accent); }
 .big-stat small { display: block; font-size: 13px; color: var(--cream); font-weight: 700; margin-top: 6px; text-transform: uppercase; }
 .stat-text { font-weight: 700; font-size: 16px; }
-.split-bar { display: flex; height: 32px; font-size: 13px; font-weight: 800; border-radius: 6px; overflow: hidden; }
-.split-a { width: var(--w); background: var(--accent); color: var(--dark); display: grid; place-items: center; }
-.split-b { flex: 1; background: var(--dark); display: grid; place-items: center; color: var(--cream); }
 .hbars { display: flex; flex-direction: column; gap: 10px; }
 .hbar { display: grid; grid-template-columns: 90px 1fr 44px; align-items: center; gap: 10px; font-size: 14px; }
 .hbar b { text-align: right; }

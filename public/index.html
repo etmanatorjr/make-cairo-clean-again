@@ -214,7 +214,7 @@
     </section>
 
     <!-- ================================================================
-         SCREEN: AIR — live AQI, PM2.5, AQI scale, chart, causes (tab)
+         SCREEN: AIR — live AQI, what PM2.5 is, chart, causes (tab)
          ================================================================ -->
     <section class="screen" id="screen-air" data-title="Air" data-tab="air" aria-labelledby="title-air" hidden>
       <header class="screen-header">
@@ -230,32 +230,15 @@
           </div>
           <div class="aqi-main">
             <span class="aqi-num" id="aqiNum">--</span>
-            <div>
-              <p class="aqi-level" id="aqiLevel">Loading…</p>
-              <p class="aqi-pm" id="aqiPm">PM2.5 -- µg/m³</p>
-            </div>
+            <p class="aqi-level" id="aqiLevel">Loading…</p>
           </div>
           <p class="aqi-tip" id="aqiTip">Getting today's tip…</p>
         </article>
 
-        <!-- SECTION: What is PM2.5? -->
+        <!-- SECTION: What is PM2.5? (one short line) -->
         <section class="plain">
           <h2 class="section-title">What's PM2.5?</h2>
-          <p>Super tiny bits of smoke and dust. Way thinner than a hair, so you breathe them in without noticing.</p>
-          <p class="fact">PM2.5 gets deep into the lungs and blood, causing heart and lung disease.</p>
-        </section>
-
-        <!-- SECTION: What is AQI? with the colour strip -->
-        <section class="plain">
-          <h2 class="section-title">What's AQI?</h2>
-          <p>A score for the air. Low is good, high is bad.</p>
-          <ol class="aqi-strip" aria-label="AQI colours: 0 to 50 good, 51 to 100 OK, 101 to 150 bad for some, 151 to 200 unhealthy, 201 and up very unhealthy">
-            <li style="--c:var(--teal-light)"><b>0–50</b>Good</li>
-            <li style="--c:var(--accent)"><b>51–100</b>OK</li>
-            <li style="--c:var(--orange-dark)"><b>101–150</b>Bad for some</li>
-            <li style="--c:var(--red)"><b>151–200</b>Unhealthy</li>
-            <li style="--c:var(--purple)"><b>201+</b>Very bad</li>
-          </ol>
+          <p>Tiny bits of smoke and dust that get deep into your lungs and blood.</p>
         </section>
 
         <!-- CHART: PM2.5 bar chart like my slide (WHO limit vs Cairo 2024 and 2025) -->
@@ -266,8 +249,7 @@
             <div class="bar-col"><span class="bar-val">39.9</span><span class="bar" style="--h:39.9;--c:var(--accent)"></span><span class="bar-label">Cairo 2024</span></div>
             <div class="bar-col"><span class="bar-val">40.8</span><span class="bar" style="--h:40.8;--c:var(--accent)"></span><span class="bar-label">Cairo 2025</span></div>
           </div>
-          <p class="chart-source">Source: IQAir. Yearly average, µg/m³.</p>
-          <p class="fact">Cairo's 2025 average PM2.5 was about 40.8 µg/m³, around 8x the WHO limit of 5.</p>
+          <p class="chart-source">Source: IQAir</p>
         </article>
 
         <!-- SECTION: Causes, an icon with a label for each (like my Causes slide) -->
@@ -295,19 +277,15 @@
         <h1 class="screen-title" id="title-waste" tabindex="-1">Waste</h1>
       </header>
       <div class="screen-body">
-        <!-- STAT: How much waste (big number next to the fact) -->
+        <!-- STAT: How much waste (big number + one short line) -->
         <div class="stat-row">
           <p class="big-stat">28M<small>tonnes a year</small></p>
-          <p class="stat-text">Egypt makes about 28 million tonnes of city waste a year, around 40% from Cairo.</p>
-        </div>
-        <div class="split-bar" role="img" aria-label="About 40 percent of Egypt's city waste comes from Cairo">
-          <span class="split-a" style="--w:40%">Cairo 40%</span><span class="split-b">rest of Egypt</span>
+          <p class="stat-text">of city waste in Egypt. About 40% comes from Cairo.</p>
         </div>
 
         <!-- BAND: Where the waste goes -->
         <div class="band">
-          <h2 class="section-title">Where does it go?</h2>
-          <p class="fact strong">Around 88% goes to open dumps and only about 7% reaches proper landfills.</p>
+          <h2 class="section-title">Where it goes</h2>
           <div class="hbars" role="img" aria-label="88 percent open dumps, 7 percent proper landfills">
             <div class="hbar"><span class="hbar-label">Open dumps</span><span class="hbar-track"><span class="hbar-fill" style="--w:88%;--c:var(--red)"></span></span><b>88%</b></div>
             <div class="hbar"><span class="hbar-label">Landfills</span><span class="hbar-track"><span class="hbar-fill" style="--w:7%;--c:var(--teal-light)"></span></span><b>7%</b></div>
@@ -316,8 +294,7 @@
 
         <!-- CARD: Recycling progress -->
         <article class="card">
-          <h2 class="section-title">Recycling is going up</h2>
-          <p class="fact strong">Recycling went from 10% in 2018 to 37% in 2024. The goal is to have 60% by 2027.</p>
+          <h2 class="section-title">Recycling</h2>
           <div class="hbars" role="img" aria-label="Recycling rate: 10 percent in 2018, 37 percent in 2024, goal of 60 percent by 2027">
             <div class="hbar"><span class="hbar-label">2018</span><span class="hbar-track"><span class="hbar-fill" style="--w:10%;--c:var(--accent)"></span></span><b>10%</b></div>
             <div class="hbar"><span class="hbar-label">2024</span><span class="hbar-track"><span class="hbar-fill" style="--w:37%;--c:var(--accent)"></span></span><b>37%</b></div>
@@ -328,7 +305,6 @@
         <!-- SECTION: Solutions, an icon with a label for each -->
         <section class="plain">
           <h2 class="section-title">How Cairo can fix it</h2>
-          <p class="fact">Better garbage truck routes and bringing informal collectors like the Zabbaleen into the system.</p>
           <ul class="icon-list">
             <li><svg class="list-icon" aria-hidden="true"><use href="#i-truck"/></svg>Better garbage truck routes</li>
             <li><svg class="list-icon" aria-hidden="true"><use href="#i-people"/></svg>Bring the Zabbaleen into the system</li>
