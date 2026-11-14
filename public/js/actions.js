@@ -68,7 +68,7 @@ var Actions = (function () {
 
     Api.sendAction(action.id).then(function (result) {
       if (result === 'sent') {
-        App.toast('Nice. Added to the Cairo total.');
+        App.toast('Saved.');
         App.refreshStats();
       } else if (result === 'queued') {
         App.toast(App.OFFLINE_MSG, 4000);

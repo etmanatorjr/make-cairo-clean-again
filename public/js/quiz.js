@@ -103,11 +103,6 @@ var Quiz = (function () {
     var isBest = Store.saveBest('quiz', score);
     $('quizProgressFill').style.width = '100%';
     $('quizFinal').textContent = score;
-    $('quizEndMsg').textContent =
-      score === 10 ? 'Perfect score. Respect.' :
-      score >= 7 ? 'Nice! You know your stuff.' :
-      score >= 4 ? 'Not bad. Check Air and Waste, then go again.' :
-      'Read Air and Waste, then try again.';
     $('quizEndBest').textContent = isBest ? 'New best!' : 'Your best: ' + bestText();
     $('quizSync').textContent = '';
     showPart('quizEnd');

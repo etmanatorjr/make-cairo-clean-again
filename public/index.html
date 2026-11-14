@@ -112,7 +112,6 @@
         <!-- IMAGE: App logo (SDG 11 style city icon) -->
         <img class="splash-logo" src="icons/icon.svg" width="112" height="112" alt="Make Cairo Clean Again logo: an orange city skyline and a leaf">
         <h1 class="splash-title" id="title-splash" tabindex="-1">Make Cairo<br>Clean Again</h1>
-        <p class="splash-sub">Cleaner air. Less trash.<br>It's our city.</p>
         <!-- BUTTON: Start — goes to Name (first time) or Home -->
         <button class="btn btn-primary btn-big" id="btnStart" type="button" aria-label="Start the app">Start</button>
       </div>
@@ -349,7 +348,6 @@
         <h1 class="screen-title" id="title-play" tabindex="-1">Play</h1>
       </header>
       <div class="screen-body">
-        <p class="lead">Quiz or game? Beat your best.</p>
         <!-- BUTTON: Quiz card — opens the Quiz -->
         <button class="play-card" type="button" data-go="quiz" aria-label="Play the quiz">
           <svg class="play-icon" aria-hidden="true"><use href="#i-quiz"/></svg>
@@ -386,7 +384,7 @@
 
         <!-- QUIZ PART: Intro -->
         <div class="quiz-part" id="quizIntro">
-          <p class="lead">10 questions about Cairo's air and trash. New order every time.</p>
+          <p class="lead">10 questions about Cairo's air and trash.</p>
           <p class="best-line">Your best: <b id="quizBestIntro">–</b></p>
           <!-- BUTTON: Start quiz -->
           <button class="btn btn-primary btn-big" id="btnQuizStart" type="button" aria-label="Start the quiz">Start</button>
@@ -414,7 +412,6 @@
         <!-- QUIZ PART: Final score -->
         <div class="quiz-part" id="quizEnd" hidden>
           <p class="end-score"><span id="quizFinal">0</span><small>/10</small></p>
-          <p class="lead" id="quizEndMsg">Nice!</p>
           <p class="best-line" id="quizEndBest">Best: –</p>
           <p class="sync-line" id="quizSync"></p>
           <!-- BUTTON: Play quiz again -->
@@ -490,7 +487,6 @@
           <p class="streak-num" id="streakNum">0</p>
           <p class="streak-text">day streak<br>Today: <span id="todayCount">0</span> of 3 done</p>
         </div>
-        <p class="lead">Do it for real, then tick it.</p>
         <!-- LIST: action rows (made in js/actions.js) -->
         <div class="action-list" id="actionList"></div>
       </div>
@@ -531,7 +527,6 @@
         <h1 class="screen-title" id="title-sources" tabindex="-1">Sources</h1>
       </header>
       <div class="screen-body">
-        <p class="lead">Where my facts come from.</p>
         <!-- LIST: source links (made in js/app.js from js/data.js) -->
         <ul class="source-list" id="sourceList"></ul>
       </div>

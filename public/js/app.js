@@ -92,7 +92,7 @@ var App = (function () {
     }
     var firstTime = !Store.hasName();
     Store.setName(check.firstName, check.initial);
-    toast(firstTime ? 'Hey ' + check.firstName + '!' : 'Saved. You\'re ' + check.display);
+    if (!firstTime) toast('Name saved.');
     Router.go('home', { replace: true });
   });
 
