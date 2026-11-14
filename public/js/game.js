@@ -158,7 +158,7 @@ var Game = (function () {
     spawnTimer -= dt;
     if (spawnTimer <= 0) {
       spawn();
-      spawnTimer = lerp(1.5, 0.7, progress());
+      spawnTimer = lerp(1.8, 0.9, progress());              // a new piece every 1.8 s at the start, 0.9 s at the end
     }
 
     // move every item down, even the one you are holding
@@ -192,7 +192,7 @@ var Game = (function () {
       id: nextId++, el: el, type: pick.bin, label: pick.label,
       x: 8 + Math.random() * (width - ITEM_W - 16),
       y: -80,
-      speed: lerp(70, 150, progress()) * (0.85 + Math.random() * 0.3)
+      speed: lerp(50, 105, progress()) * (0.85 + Math.random() * 0.3)   // pixels per second: slow at the start, faster later
     };
     el.addEventListener('pointerdown', function (e) { startDrag(e, item); });
     // keyboard users: Enter/Space on an item selects it (e.detail is 0 for keyboard clicks)
