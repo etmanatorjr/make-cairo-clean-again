@@ -229,7 +229,13 @@ a { color: var(--accent); }
 .aqi-main { display: flex; align-items: center; gap: 16px; }
 .aqi-num { font-size: 60px; font-weight: 800; line-height: 1; min-width: 86px; color: var(--aqi); }
 .aqi-level { font-size: 22px; font-weight: 800; text-transform: uppercase; }
+.aqi-pm { color: var(--cream); font-size: 15px; }
 .aqi-tip { font-weight: 700; }
+
+/* AQI colour scale */
+.aqi-strip { list-style: none; display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
+.aqi-strip li { font-size: 12px; line-height: 1.25; color: var(--cream); padding-top: 8px; border-top: 10px solid var(--c); }
+.aqi-strip b { display: block; color: var(--text); }
 
 
 /* PM2.5 bar chart (like my slide) */

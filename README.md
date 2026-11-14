@@ -32,7 +32,7 @@ Evidence for my teacher (every extra skill, what I researched, and where it is i
 | Splash | App name, logo, Start button |
 | Name | First time only: first name (A–Z, max 15) + last name initial (1 letter), shown as "Mahmoud E." Bad words blocked. |
 | Home | Hey + my name, "everyone together" totals from the sheet, buttons |
-| Air | Live Cairo AQI with a tip, what PM2.5 is in one line, the PM2.5 chart, causes |
+| Air | Live Cairo AQI and PM2.5 (µg/m³) with a tip, what PM2.5 and AQI are with the colour scale, the PM2.5 chart, causes |
 | Waste | How much waste, where it goes, recycling and how to fix it, as short charts and lists |
 | Play | Choose Quiz or Game |
 | Quiz | 10 random questions, shuffled answers, right/wrong with the fact, best score |

@@ -214,7 +214,7 @@
     </section>
 
     <!-- ================================================================
-         SCREEN: AIR — live AQI, what PM2.5 is, chart, causes (tab)
+         SCREEN: AIR — live AQI, what PM2.5 and AQI are, chart, causes (tab)
          ================================================================ -->
     <section class="screen" id="screen-air" data-title="Air" data-tab="air" aria-labelledby="title-air" hidden>
       <header class="screen-header">
@@ -230,7 +230,10 @@
           </div>
           <div class="aqi-main">
             <span class="aqi-num" id="aqiNum">--</span>
-            <p class="aqi-level" id="aqiLevel">Loading…</p>
+            <div>
+              <p class="aqi-level" id="aqiLevel">Loading…</p>
+              <p class="aqi-pm" id="aqiPm">PM2.5 -- µg/m³</p>
+            </div>
           </div>
           <p class="aqi-tip" id="aqiTip">Getting today's tip…</p>
         </article>
@@ -241,6 +244,19 @@
           <p>Tiny bits of smoke and dust that get deep into your lungs and blood.</p>
         </section>
 
+        <!-- SECTION: What is AQI? with the colour scale -->
+        <section class="plain">
+          <h2 class="section-title">What's AQI?</h2>
+          <p>A score for the air. Low is good, high is bad.</p>
+          <ol class="aqi-strip" aria-label="AQI colours: 0 to 50 good, 51 to 100 OK, 101 to 150 bad for some, 151 to 200 unhealthy, 201 and up very unhealthy">
+            <li style="--c:var(--teal-light)"><b>0–50</b>Good</li>
+            <li style="--c:var(--accent)"><b>51–100</b>OK</li>
+            <li style="--c:var(--orange-dark)"><b>101–150</b>Bad for some</li>
+            <li style="--c:var(--red)"><b>151–200</b>Unhealthy</li>
+            <li style="--c:var(--purple)"><b>201+</b>Very bad</li>
+          </ol>
+        </section>
+
         <!-- CHART: PM2.5 bar chart like my slide (WHO limit vs Cairo 2024 and 2025) -->
         <article class="card chart-card">
           <h2 class="section-title">Cairo air pollution (PM2.5) is 8x the safe limit</h2>
@@ -249,7 +265,7 @@
             <div class="bar-col"><span class="bar-val">39.9</span><span class="bar" style="--h:39.9;--c:var(--accent)"></span><span class="bar-label">Cairo 2024</span></div>
             <div class="bar-col"><span class="bar-val">40.8</span><span class="bar" style="--h:40.8;--c:var(--accent)"></span><span class="bar-label">Cairo 2025</span></div>
           </div>
-          <p class="chart-source">Source: IQAir</p>
+          <p class="chart-source">Source: IQAir. Yearly average, µg/m³.</p>
         </article>
 
         <!-- SECTION: Causes, an icon with a label for each (like my Causes slide) -->
