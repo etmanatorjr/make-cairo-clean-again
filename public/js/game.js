@@ -3,10 +3,14 @@
    (plastic, paper, metal, organic) before the 60 second timer runs out.
 
    Ways to sort:
-     1. Drag an item onto a bin (mouse or finger, using Pointer Events).
+     1. Hold an item and move it LEFT or RIGHT (mouse or finger, Pointer
+        Events). It keeps falling while you hold it, and lands in the bin
+        it is above when it reaches the bottom.
      2. Tap an item to select it, then tap a bin.
      3. Tap a bin with nothing selected = sorts the lowest item.
      4. Keyboard: keys 1-4 sort the lowest item into bin 1-4.
+   Trash you grabbed lands in the bin below it. Trash you never touched is
+   "Missed" (no points) when it reaches the bottom.
    Points: +10 right bin, -5 wrong bin (never below 0).
    ========================================================================== */
 var Game = (function () {
@@ -79,7 +83,7 @@ var Game = (function () {
     timeLeft = duration();
     setHud();
     $('gameSync').textContent = '';
-    showOverlay('Sort the trash', "Drag each thing into the right bin. Or tap it, then tap a bin. You've got 60 seconds.", 'Start', 'Start the game', true);
+    showOverlay('Sort the trash', "Hold a piece of trash and move it left or right so it falls into the right bin. You've got 60 seconds.", 'Start', 'Start the game', true);
   }
 
   function start() {
@@ -157,13 +161,12 @@ var Game = (function () {
       spawnTimer = lerp(1.5, 0.7, progress());
     }
 
-    // move every item down
+    // move every item down, even the one you are holding
     var floor = binsTop() - 70;
     for (var i = items.length - 1; i >= 0; i--) {
       var it = items[i];
-      if (drag && drag.item === it) continue;
       it.y += it.speed * dt;
-      if (it.y >= floor) { miss(it); continue; }
+      if (it.y >= floor) { land(it); continue; }
       place(it);
     }
     setHud();
@@ -180,7 +183,7 @@ var Game = (function () {
     var el = document.createElement('button');
     el.type = 'button';
     el.className = 'trash';
-    el.setAttribute('aria-label', pick.label + '. Tap, then tap a bin.');
+    el.setAttribute('aria-label', pick.label + '. Hold and move left or right, or tap then tap a bin.');
     el.innerHTML = '<svg aria-hidden="true"><use href="#' + pick.icon + '"/></svg><span></span>';
     el.lastChild.textContent = pick.label;
 
@@ -215,9 +218,15 @@ var Game = (function () {
     layer.innerHTML = '';
   }
 
-  function miss(it) {
-    floatText(it.x + 10, it.y, 'Missed', 'bad');
-    removeItem(it);
+  /** An item reached the bottom. */
+  function land(it) {
+    if (drag && drag.item === it) endDrag(null);   // you were still holding it
+    if (it.steered) {
+      sort(it, binUnder(it.x + ITEM_W / 2).getAttribute('data-bin'));   // drops into the bin below it
+    } else {
+      floatText(it.x + 10, it.y, 'Missed', 'bad');                      // never touched: no points
+      removeItem(it);
+    }
   }
 
   /** Lowest item on screen (closest to the bins). */
@@ -262,26 +271,28 @@ var Game = (function () {
     setTimeout(function () { f.remove(); }, 600);
   }
 
-  /** Which bin is under this point (or null)? */
-  function binAt(p) {
-    var s = scale();
-    var areaRect = area.getBoundingClientRect();
+  /** The bin below this x position (the closest one if x is in a gap). */
+  function binUnder(x) {
+    var best = bins[0], bestDist = Infinity;
     for (var i = 0; i < bins.length; i++) {
-      var r = bins[i].getBoundingClientRect();
-      var left = (r.left - areaRect.left) / s, right = (r.right - areaRect.left) / s;
-      var top = (r.top - areaRect.top) / s - 30;                     // a little help above the bin
-      if (p.x >= left && p.x <= right && p.y >= top) return bins[i];
+      var left = bins[i].offsetLeft, right = left + bins[i].offsetWidth;
+      if (x >= left && x <= right) return bins[i];
+      var dist = Math.min(Math.abs(x - left), Math.abs(x - right));
+      if (dist < bestDist) { bestDist = dist; best = bins[i]; }
     }
-    return null;
+    return best;
   }
 
-  // ---------- drag and drop (Pointer Events: works for mouse AND touch) ----------
+  // ---------- hold and steer (Pointer Events: works for mouse AND touch) ----------
+  // While you hold an item it keeps falling; you can only move it left or right.
   function startDrag(e, it) {
     if (state !== 'playing') return;
     e.preventDefault();
     var p = local(e);
-    drag = { item: it, dx: p.x - it.x, dy: p.y - it.y, startX: p.x, startY: p.y, moved: false, pointerId: e.pointerId };
+    drag = { item: it, dx: p.x - it.x, startX: p.x, startY: p.y, moved: false, pointerId: e.pointerId };
+    it.steered = true;                                 // you grabbed it: it will land in the bin below
     it.el.classList.add('is-dragging');
+    showTarget(it);
     try { area.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
   }
 
@@ -289,11 +300,16 @@ var Game = (function () {
     if (!drag || e.pointerId !== drag.pointerId) return;
     var p = local(e);
     if (Math.abs(p.x - drag.startX) + Math.abs(p.y - drag.startY) > 8) drag.moved = true;
-    drag.item.x = p.x - drag.dx;
-    drag.item.y = p.y - drag.dy;
+    // only sideways: keep it inside the game area
+    drag.item.x = Math.max(0, Math.min(area.offsetWidth - ITEM_W, p.x - drag.dx));
     place(drag.item);
-    var over = binAt(p);
-    bins.forEach(function (b) { b.classList.toggle('is-hover', b === over); });
+    showTarget(drag.item);
+  }
+
+  /** Light up the bin the item would land in. */
+  function showTarget(it) {
+    var target = binUnder(it.x + ITEM_W / 2);
+    bins.forEach(function (b) { b.classList.toggle('is-hover', b === target); });
   }
 
   function endDrag(e) {
@@ -302,11 +318,8 @@ var Game = (function () {
     drag = null;
     d.item.el.classList.remove('is-dragging');
     bins.forEach(function (b) { b.classList.remove('is-hover'); });
-    if (!e) return;
-    if (!d.moved) { select(d.item); return; }          // it was a tap: select it
-    var over = binAt(local(e));
-    if (over) sort(d.item, over.getAttribute('data-bin'));
-    // else: let go somewhere else — it keeps falling from there
+    if (e && !d.moved) select(d.item);                 // it was a tap: select it
+    // after letting go it just keeps falling from where it is
   }
 
   area.addEventListener('pointermove', moveDrag);

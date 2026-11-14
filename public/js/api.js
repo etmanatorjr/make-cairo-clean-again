@@ -21,7 +21,8 @@ var Api = (function () {
   /** fetch() with a time limit so the app never hangs. */
   function request(path, options) {
     var ctrl = new AbortController();
-    var timer = setTimeout(function () { ctrl.abort(); }, 12000);
+    // 20 seconds: Google's script can be slow to wake up after a quiet time
+    var timer = setTimeout(function () { ctrl.abort(); }, 20000);
     // cache: 'no-cache' = always ask the server for fresh scores
     var opts = Object.assign({ signal: ctrl.signal, cache: 'no-cache' }, options || {});
     return fetch(base() + path, opts)
@@ -67,7 +68,10 @@ var Api = (function () {
       console.warn('Server rejected', path, r.data);
       return 'rejected';
     }).catch(function () {
+      // no connection: keep it, and tell the player simply
+      // (Android's WebView doesn't always fire the "offline" event, so we say it here too)
       enqueue(path, body);
+      if (window.App && App.toast) App.toast(App.OFFLINE_MSG, 4000);
       return 'queued';
     });
   }

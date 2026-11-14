@@ -132,12 +132,12 @@
         <form id="nameForm" class="name-form" novalidate>
           <!-- FIELD: First name -->
           <label class="field-label" for="firstNameInput">First name</label>
-          <input class="field-input" id="firstNameInput" name="firstName" type="text" maxlength="15" autocomplete="given-name" autocapitalize="words" spellcheck="false" placeholder="Mahmoud" aria-describedby="firstNameError">
+          <input class="field-input" id="firstNameInput" name="firstName" type="text" maxlength="15" autocomplete="given-name" autocapitalize="words" spellcheck="false" placeholder="Eg. John" aria-describedby="firstNameError">
           <p class="field-error" id="firstNameError" role="alert"></p>
 
           <!-- FIELD: Last name initial (1 letter) -->
           <label class="field-label" for="initialInput">Last name initial</label>
-          <input class="field-input field-initial" id="initialInput" name="initial" type="text" maxlength="1" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="E" aria-describedby="initialError">
+          <input class="field-input field-initial" id="initialInput" name="initial" type="text" maxlength="1" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Eg. D" aria-describedby="initialError">
           <p class="field-error" id="initialError" role="alert"></p>
 
           <!-- BUTTON: Save name -->
@@ -169,29 +169,27 @@
           <span class="tile-aqi" id="homeAqi">AQI …</span>
         </button>
 
-        <div class="row-split">
+        <!-- GRID: four buttons, all the same shape and colour -->
+        <div class="home-grid">
           <!-- BUTTON: Waste -->
           <button class="tile" type="button" data-go="waste" aria-label="Waste: where Cairo's trash goes">
             <svg class="tile-icon" aria-hidden="true"><use href="#i-waste"/></svg>
             <span class="tile-label">Waste</span>
           </button>
           <!-- BUTTON: Quiz -->
-          <button class="tile tile-cream" type="button" data-go="quiz" aria-label="Quiz: 10 questions">
+          <button class="tile" type="button" data-go="quiz" aria-label="Quiz: 10 questions">
             <svg class="tile-icon" aria-hidden="true"><use href="#i-quiz"/></svg>
             <span class="tile-label">Quiz</span>
           </button>
-        </div>
-
-        <div class="row-split flip">
           <!-- BUTTON: Game -->
           <button class="tile" type="button" data-go="game" aria-label="Game: sort the trash">
             <svg class="tile-icon" aria-hidden="true"><use href="#i-game"/></svg>
             <span class="tile-label">Game</span>
           </button>
           <!-- BUTTON: Take Action -->
-          <button class="tile tile-orange" type="button" data-go="action" aria-label="Take Action: tick off what you did today">
+          <button class="tile" type="button" data-go="action" aria-label="Take Action: tick off what you did today">
             <svg class="tile-icon" aria-hidden="true"><use href="#i-action"/></svg>
-            <span class="tile-label">Take Action</span><span class="tile-sub" id="homeStreak">Start a streak</span>
+            <span><span class="tile-label">Take Action</span><span class="tile-sub" id="homeStreak">Start a streak</span></span>
           </button>
         </div>
 
@@ -363,7 +361,7 @@
         <button class="play-card alt" type="button" data-go="game" aria-label="Play sort the trash">
           <svg class="play-icon" aria-hidden="true"><use href="#i-game"/></svg>
           <span class="play-name">Sort the trash</span>
-          <span class="play-desc">Right bin, fast. 60 sec.</span>
+          <span class="play-desc">Steer the trash into the right bin. 60 sec.</span>
           <span class="play-best">Best <b id="playBestGame">–</b></span>
         </button>
         <!-- BUTTON: Leaderboard -->
@@ -449,7 +447,7 @@
         <button class="icon-btn small" id="btnGamePause" type="button" aria-label="Pause game"><svg aria-hidden="true"><use href="#i-pause"/></svg></button>
       </div>
       <!-- GAME AREA: trash falls here (items are made in js/game.js) -->
-      <div class="game-area" id="gameArea" aria-label="Game area. Drag or tap each piece of trash, then tap the right bin.">
+      <div class="game-area" id="gameArea" aria-label="Game area. Hold a piece of trash and move it left or right so it falls into the right bin, or tap it and then tap a bin.">
         <div class="game-items" id="gameItems"></div>
         <!-- BINS: the four bins at the bottom -->
         <div class="bins" id="bins">
@@ -466,7 +464,7 @@
         <div class="game-overlay" id="gameOverlay">
           <div class="overlay-card">
             <h2 class="overlay-title" id="gameOverlayTitle">Sort the trash</h2>
-            <p class="overlay-text" id="gameOverlayText">Drag each thing into the right bin. Or tap it, then tap a bin. You've got 60 seconds.</p>
+            <p class="overlay-text" id="gameOverlayText">Hold a piece of trash and move it left or right so it falls into the right bin. You've got 60 seconds.</p>
             <ul class="overlay-rules" id="gameRules">
               <li><b>+10</b> right bin</li>
               <li><b>−5</b> wrong bin</li>

@@ -51,13 +51,15 @@ var App = (function () {
     $('statQuizzes').textContent = t.quizzes;
     $('statGames').textContent = t.games;
   }
-  function refreshStats() {
+  function refreshStats(isRetry) {
     renderStats(Store.get('statsCache', null));
     return Api.stats().then(function (r) {
       if (!r.ok || !r.data.totals) throw new Error('stats');
       Store.set('statsCache', r.data.totals);
       renderStats(r.data.totals);
     }).catch(function () {
+      // try once more a bit later (the first request after a quiet time can be slow)
+      if (!isRetry) setTimeout(function () { refreshStats(true); }, 3000);
       if (!Store.get('statsCache', null)) {
         $('statActions').textContent = '–';
         $('statQuizzes').textContent = '–';

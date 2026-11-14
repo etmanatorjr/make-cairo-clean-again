@@ -174,7 +174,8 @@ a { color: var(--accent); }
 }
 .field-input:focus { outline: none; border-color: var(--accent); }
 .field-input::placeholder { color: var(--card); }
-.field-initial { width: 72px; text-align: center; text-transform: uppercase; padding: 0; }
+.field-initial { width: 104px; text-align: center; text-transform: uppercase; padding: 0; }
+.field-initial::placeholder { text-transform: none; }   /* show "Eg. D", not "EG. D" */
 .field-error { min-height: 22px; color: var(--accent); font-weight: 700; font-size: 15px; }
 
 /* ---------- HOME ---------- */
@@ -184,22 +185,18 @@ a { color: var(--accent); }
 .together-text { font-weight: 700; line-height: 1.35; color: var(--cream); }
 
 .tile {
-  display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; gap: 18px;
-  min-height: 108px; padding: 16px; border: 0; border-radius: var(--radius); text-align: left;
+  display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; gap: 12px;
+  height: 116px; padding: 16px; border: 0; border-radius: var(--radius); text-align: left;
   background: var(--card); color: var(--text);
 }
 .tile-icon { width: 28px; height: 28px; color: var(--accent); }
 .tile-label { display: block; font-size: 17px; }
-.tile-sub { display: block; font-size: 14px; font-weight: 700; margin-top: 2px; }
-.tile-air { flex-direction: row; align-items: center; min-height: 0; gap: 14px; }
+.tile-sub { display: block; font-size: 14px; font-weight: 700; color: var(--cream); margin-top: 2px; }
+.tile-air { flex-direction: row; align-items: center; height: auto; gap: 14px; }
 .tile-text { flex: 1; }
 .tile-aqi { font-size: 15px; font-weight: 800; color: var(--dark); background: var(--accent); border-radius: 6px; padding: 5px 10px; white-space: nowrap; }
-.tile-cream { background: var(--cream); color: var(--dark); }
-.tile-cream .tile-icon { color: var(--dark); }
-.tile-orange { background: var(--accent); color: var(--dark); }
-.tile-orange .tile-icon { color: var(--dark); }
-.row-split { display: grid; grid-template-columns: 3fr 2fr; gap: 12px; }
-.row-split.flip { grid-template-columns: 2fr 3fr; }
+/* Waste, Quiz, Game, Take Action: one even 2 x 2 grid, same shape and colour */
+.home-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
 .link-list { list-style: none; display: flex; flex-direction: column; }
 .link-row {
