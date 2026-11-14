@@ -80,7 +80,8 @@ var DATA = (function () {
     { name: 'Egypt Today', what: 'Egypt targets 60% waste recycling by 2027 (2025)', url: 'https://www.egypttoday.com/Article/1/140752/Egypt-Targets-60-Waste-Recycling-Rate-by-2027' },
     { name: 'ScienceDirect', what: 'Smart waste collection in Greater Cairo (Ain Shams Engineering Journal, 2023)', url: 'https://www.sciencedirect.com/science/article/pii/S2090447923000722' },
     { name: 'Waste & Recycling Magazine', what: "An overview of Egypt's waste management landscape (2024)", url: 'https://www.wasterecyclingmag.com/news/waste-management/an-overview-of-egypt-s-waste-management-landscape' },
-    { name: 'Open-Meteo', what: 'Live Cairo air quality API (free, no key)', url: 'https://open-meteo.com/en/docs/air-quality-api' }
+    { name: 'Open-Meteo', what: 'Live Cairo air quality API (free, no key)', url: 'https://open-meteo.com/en/docs/air-quality-api' },
+    { name: 'United Nations', what: 'Official SDG 11 icon (Sustainable Development Goals)', url: 'https://www.un.org/sustainabledevelopment/' }
   ];
 
   return {
