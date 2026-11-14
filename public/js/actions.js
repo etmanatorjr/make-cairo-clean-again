@@ -79,7 +79,8 @@ var Actions = (function () {
   /** The little line on the Home "Take Action" button. */
   function updateHome() {
     var s = streak();
-    $('homeStreak').textContent = s > 0 ? s + ' day streak · ' + doneToday().length + '/3 today' : 'Start a streak';
+    // short so it fits the Home button (today's count is on the Take Action screen)
+    $('homeStreak').textContent = s > 0 ? s + ' day streak' : 'Start a streak';
   }
 
   return { render: render, updateHome: updateHome, streak: streak };

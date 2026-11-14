@@ -190,7 +190,9 @@ a { color: var(--accent); }
 }
 .tile-icon { width: 28px; height: 28px; color: var(--accent); }
 .tile-label { display: block; font-size: 17px; }
-.tile-sub { display: block; font-size: 14px; font-weight: 700; color: var(--cream); margin-top: 2px; }
+.tile-sub { display: block; font-size: 14px; font-weight: 700; color: var(--cream); margin-top: 2px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }   /* never spills out of the button */
+.tile > span { min-width: 0; max-width: 100%; }
 .tile-air { flex-direction: row; align-items: center; height: auto; gap: 14px; }
 .tile-text { flex: 1; }
 .tile-aqi { font-size: 15px; font-weight: 800; color: var(--dark); background: var(--accent); border-radius: 6px; padding: 5px 10px; white-space: nowrap; }
