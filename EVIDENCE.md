@@ -195,7 +195,7 @@ After testing version 1, I made two big improvements.
 
 ### 5.2 Colours and style from my SDG 11.6 PowerPoint
 - **Why:** version 1 looked like a generic app template. Version 2 matches my presentation, so the app and the slides feel like one project.
-- **Where the version 2 code is:** commit `6a0a1b4` ("Part 3: slide-style design and casual text") in the GitHub history. Some of it was removed in version 3 (see 5.5), so those parts are marked below.
+- **Where the version 2 code is:** commit `0ac63f7` ("Part 3: slide-style design and casual text") in the GitHub history. Some of it was removed in version 3 (see 5.5), so those parts are marked below.
 - **Colours:**
   - Only the 13 colours from my PowerPoint are used anywhere. They're CSS variables in `:root`, with a comment saying where they come from (`public/css/styles.css:7–22`).
   - Every other colour was replaced, including greens, reds, greys, black, gradients, see-through overlays and soft shadows.
