@@ -25,7 +25,7 @@ local.properties
 .idea/
 .vscode/
 
-# Claude Code local settings
+# Local editor settings
 .claude/
 
 # Capacitor / Android
